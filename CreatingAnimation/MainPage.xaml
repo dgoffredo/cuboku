@@ -1,0 +1,2147 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="Cuboku.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:local="clr-namespace:Cuboku"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    shell:SystemTray.IsVisible="True"
+    xmlns:System="clr-namespace:System;assembly=mscorlib"
+    OrientationChanged="PhoneApplicationPage_OrientationChanged"
+    ManipulationStarted="PhoneApplicationPage_ManipulationStarted"
+    ManipulationDelta="PhoneApplicationPage_ManipulationDelta"
+    ManipulationCompleted="PhoneApplicationPage_ManipulationCompleted"
+    Tap="PhoneApplicationPage_Tap"
+    Loaded="PhoneApplicationPage_Loaded">
+
+    <Canvas x:Name="PageCanvas" Tap="PageCanvas_Tap">
+        <!--LayoutRoot is the root grid where all page content is placed-->
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel x:Name="TitlePanel"
+                  Canvas.Top="0" Canvas.ZIndex="1" Tap="TitlePanel_Tap"
+                  HorizontalAlignment="Stretch" Width="480">
+            <!--<TextBlock Style="{StaticResource PhoneTextTitle1Style}" HorizontalAlignment="Center">
+                Level 1
+            </TextBlock>-->
+            <toolkit:ListPicker HorizontalAlignment="Stretch" x:Name="LevelSelector"  BorderThickness="0">
+                <toolkit:ListPicker.Items>
+                    <toolkit:ListPickerItem Tag="1" Content="Level 3" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+                    <toolkit:ListPickerItem Tag="2" Content="Level 2" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+                    <toolkit:ListPickerItem Tag="2" Content="more..." FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+                </toolkit:ListPicker.Items>
+            </toolkit:ListPicker>
+        </StackPanel>
+
+        <Grid x:Name="LayoutRoot" Background="Transparent" Canvas.Top="140"
+              Canvas.ZIndex="0" Tap="LayoutRoot_Tap">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.Resources>
+                <System:Double x:Key="cellHeight">40</System:Double>
+                <System:Double x:Key="cellWidth">36</System:Double>
+                <System:Double x:Key="cellFontSize">30</System:Double>
+                <!--<Color x:Key="userEnteredColor"></Color>-->
+
+                <System:Double p:Key="tappadHeight">40</System:Double>
+                <System:Double p:Key="tappadWidth">90</System:Double>
+                <System:Double p:Key="tappadOpacity">0</System:Double>
+
+                <System:Double x:Key="sharedFrom">0</System:Double>
+                <System:Double x:Key="sharedTo">100</System:Double>
+                <System:Int32 x:Key="sharedOscillations">4</System:Int32>
+                <System:Double x:Key="sharedSpringiness">15</System:Double>
+
+                <System:Double x:Key="rightSliderInitialXOffset">75</System:Double>
+                <System:Double x:Key="numPickerInitialYOffset">200</System:Double>
+                <!--<System:String x:Key="sharedDuration">0:0:3</System:String>-->
+
+                <Storyboard x:Name="PickerInOut" FillBehavior="HoldEnd" Completed="PickerInOut_Completed">
+                    <DoubleAnimation x:Name="anim_numPicker"
+                                     Storyboard.TargetName="numPicker_tran"
+                                     Storyboard.TargetProperty="Y"
+                                     From="{StaticResource numPickerInitialYOffset}"
+                                     To="0" Duration="0:0:0.6">
+                        <DoubleAnimation.EasingFunction>
+                            <BounceEase EasingMode="EaseOut" Bounciness="3"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+
+                <Storyboard x:Name="SliderInOut" FillBehavior="HoldEnd" Completed="SliderInOut_Completed">
+                    <DoubleAnimation x:Name="anim_planeSelectSliderRight"
+                                     Storyboard.TargetName="planeSelectSliderRight_tran"
+                                     Storyboard.TargetProperty="X"
+                                     From="{StaticResource rightSliderInitialXOffset}"
+                                     To="0" Duration="0:0:1.0">
+                        <DoubleAnimation.EasingFunction>
+                            <BounceEase EasingMode="EaseOut" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+
+                <Storyboard x:Name="Twistidoo" FillBehavior="HoldEnd"  Completed="storyBoard_Completed">
+
+                    <DoubleAnimation x:Name="anim_0_0_0_X"
+                                 Storyboard.TargetName="cell_0_0_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_0_0_Y"
+                                 Storyboard.TargetName="cell_0_0_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_0_0_Z"
+                                 Storyboard.TargetName="cell_0_0_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_0_1_X"
+                                 Storyboard.TargetName="cell_0_0_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_0_1_Y"
+                                 Storyboard.TargetName="cell_0_0_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_0_1_Z"
+                                 Storyboard.TargetName="cell_0_0_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_0_2_X"
+                                 Storyboard.TargetName="cell_0_0_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_0_2_Y"
+                                 Storyboard.TargetName="cell_0_0_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_0_2_Z"
+                                 Storyboard.TargetName="cell_0_0_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_1_0_X"
+                                 Storyboard.TargetName="cell_0_1_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_1_0_Y"
+                                 Storyboard.TargetName="cell_0_1_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_1_0_Z"
+                                 Storyboard.TargetName="cell_0_1_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_1_1_X"
+                                 Storyboard.TargetName="cell_0_1_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_1_1_Y"
+                                 Storyboard.TargetName="cell_0_1_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_1_1_Z"
+                                 Storyboard.TargetName="cell_0_1_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_1_2_X"
+                                 Storyboard.TargetName="cell_0_1_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_1_2_Y"
+                                 Storyboard.TargetName="cell_0_1_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_1_2_Z"
+                                 Storyboard.TargetName="cell_0_1_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_2_0_X"
+                                 Storyboard.TargetName="cell_0_2_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_2_0_Y"
+                                 Storyboard.TargetName="cell_0_2_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_2_0_Z"
+                                 Storyboard.TargetName="cell_0_2_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_2_1_X"
+                                 Storyboard.TargetName="cell_0_2_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_2_1_Y"
+                                 Storyboard.TargetName="cell_0_2_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_2_1_Z"
+                                 Storyboard.TargetName="cell_0_2_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_0_2_2_X"
+                                 Storyboard.TargetName="cell_0_2_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_2_2_Y"
+                                 Storyboard.TargetName="cell_0_2_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_0_2_2_Z"
+                                 Storyboard.TargetName="cell_0_2_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_0_0_X"
+                                 Storyboard.TargetName="cell_1_0_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_0_0_Y"
+                                 Storyboard.TargetName="cell_1_0_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_0_0_Z"
+                                 Storyboard.TargetName="cell_1_0_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_0_1_X"
+                                 Storyboard.TargetName="cell_1_0_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_0_1_Y"
+                                 Storyboard.TargetName="cell_1_0_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_0_1_Z"
+                                 Storyboard.TargetName="cell_1_0_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_0_2_X"
+                                 Storyboard.TargetName="cell_1_0_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_0_2_Y"
+                                 Storyboard.TargetName="cell_1_0_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_0_2_Z"
+                                 Storyboard.TargetName="cell_1_0_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_1_0_X"
+                                 Storyboard.TargetName="cell_1_1_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_1_0_Y"
+                                 Storyboard.TargetName="cell_1_1_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_1_0_Z"
+                                 Storyboard.TargetName="cell_1_1_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_1_1_X"
+                                 Storyboard.TargetName="cell_1_1_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_1_1_Y"
+                                 Storyboard.TargetName="cell_1_1_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_1_1_Z"
+                                 Storyboard.TargetName="cell_1_1_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_1_2_X"
+                                 Storyboard.TargetName="cell_1_1_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_1_2_Y"
+                                 Storyboard.TargetName="cell_1_1_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_1_2_Z"
+                                 Storyboard.TargetName="cell_1_1_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_2_0_X"
+                                 Storyboard.TargetName="cell_1_2_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_2_0_Y"
+                                 Storyboard.TargetName="cell_1_2_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_2_0_Z"
+                                 Storyboard.TargetName="cell_1_2_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_2_1_X"
+                                 Storyboard.TargetName="cell_1_2_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_2_1_Y"
+                                 Storyboard.TargetName="cell_1_2_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_2_1_Z"
+                                 Storyboard.TargetName="cell_1_2_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_1_2_2_X"
+                                 Storyboard.TargetName="cell_1_2_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_2_2_Y"
+                                 Storyboard.TargetName="cell_1_2_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_1_2_2_Z"
+                                 Storyboard.TargetName="cell_1_2_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_0_0_X"
+                                 Storyboard.TargetName="cell_2_0_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_0_0_Y"
+                                 Storyboard.TargetName="cell_2_0_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_0_0_Z"
+                                 Storyboard.TargetName="cell_2_0_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_0_1_X"
+                                 Storyboard.TargetName="cell_2_0_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_0_1_Y"
+                                 Storyboard.TargetName="cell_2_0_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_0_1_Z"
+                                 Storyboard.TargetName="cell_2_0_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_0_2_X"
+                                 Storyboard.TargetName="cell_2_0_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_0_2_Y"
+                                 Storyboard.TargetName="cell_2_0_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_0_2_Z"
+                                 Storyboard.TargetName="cell_2_0_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_1_0_X"
+                                 Storyboard.TargetName="cell_2_1_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_1_0_Y"
+                                 Storyboard.TargetName="cell_2_1_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_1_0_Z"
+                                 Storyboard.TargetName="cell_2_1_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_1_1_X"
+                                 Storyboard.TargetName="cell_2_1_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_1_1_Y"
+                                 Storyboard.TargetName="cell_2_1_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_1_1_Z"
+                                 Storyboard.TargetName="cell_2_1_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_1_2_X"
+                                 Storyboard.TargetName="cell_2_1_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_1_2_Y"
+                                 Storyboard.TargetName="cell_2_1_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_1_2_Z"
+                                 Storyboard.TargetName="cell_2_1_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_2_0_X"
+                                 Storyboard.TargetName="cell_2_2_0_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_2_0_Y"
+                                 Storyboard.TargetName="cell_2_2_0_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_2_0_Z"
+                                 Storyboard.TargetName="cell_2_2_0_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_2_1_X"
+                                 Storyboard.TargetName="cell_2_2_1_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_2_1_Y"
+                                 Storyboard.TargetName="cell_2_2_1_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_2_1_Z"
+                                 Storyboard.TargetName="cell_2_2_1_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+                    <DoubleAnimation x:Name="anim_2_2_2_X"
+                                 Storyboard.TargetName="cell_2_2_2_tran" 
+                                 Storyboard.TargetProperty="X" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_2_2_Y"
+                                 Storyboard.TargetName="cell_2_2_2_tran" 
+                                 Storyboard.TargetProperty="Y" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <DoubleAnimation x:Name="anim_2_2_2_Z"
+                                 Storyboard.TargetName="cell_2_2_2_proj" 
+                                 Storyboard.TargetProperty="GlobalOffsetZ" 
+                                 From="{StaticResource sharedFrom}" To="{StaticResource sharedTo}" 
+                                 Duration="0:0:1">
+                        <DoubleAnimation.EasingFunction>
+                            <ElasticEase EasingMode="EaseOut" Springiness="{StaticResource sharedSpringiness}"
+                                     Oscillations="{StaticResource sharedOscillations}" />
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+
+
+                </Storyboard>
+            </Grid.Resources>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <Grid p:Name="TheCube"  
+                  Width="431" Height="479" 
+                  VerticalAlignment="Bottom">
+                    <!--VerticalAlignment="Bottom" 
+                  Margin="-20,-17,0,121">-->
+
+                    <Border p:Name="cell_0_0_0" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_0_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_0_0_tran" X="0" Y="0" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_0_0_1" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_0_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_0_1_tran" X="43" Y="-43" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="6" />
+                    </Border>
+
+                    <Border p:Name="cell_0_0_2" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_0_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_0_2_tran" X="86" Y="-86" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="9" />
+                    </Border>
+
+                    <Border p:Name="cell_0_1_0" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_1_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_1_0_tran" X="0" Y="-143" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
+                    </Border>
+
+                    <Border p:Name="cell_0_1_1" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_1_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_1_1_tran" X="43" Y="-186" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
+                    </Border>
+
+                    <Border p:Name="cell_0_1_2" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_1_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_1_2_tran" X="86" Y="-229" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="3" />
+                    </Border>
+
+                    <Border p:Name="cell_0_2_0" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_2_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_2_0_tran" X="0" Y="-286" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_0_2_1" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_2_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_2_1_tran" X="43" Y="-329" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_0_2_2" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_0_2_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_0_2_2_tran" X="86" Y="-372" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
+                    </Border>
+
+                    <Border p:Name="cell_1_0_0" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_0_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_0_0_tran" X="124" Y="0" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
+                    </Border>
+
+                    <Border p:Name="cell_1_0_1" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_0_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_0_1_tran" X="167" Y="-43" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
+                    </Border>
+
+                    <Border p:Name="cell_1_0_2" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_0_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_0_2_tran" X="210" Y="-86" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_1_1_0" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_1_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_1_0_tran" X="124" Y="-143" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_1_1_1" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_1_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_1_1_tran" X="167" Y="-186" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_1_1_2" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_1_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_1_2_tran" X="210" Y="-229" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
+                    </Border>
+
+                    <Border p:Name="cell_1_2_0" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_2_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_2_0_tran" X="124" Y="-286" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
+                    </Border>
+
+                    <Border p:Name="cell_1_2_1" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_2_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_2_1_tran" X="167" Y="-329" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_1_2_2" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_1_2_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_1_2_2_tran" X="210" Y="-372" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_2_0_0" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_0_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_0_0_tran" X="248" Y="0" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_2_0_1" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_0_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_0_1_tran" X="291" Y="-43" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
+                    </Border>
+
+                    <Border p:Name="cell_2_0_2" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_0_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_0_2_tran" X="334" Y="-86" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
+                    </Border>
+
+                    <Border p:Name="cell_2_1_0" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_1_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_1_0_tran" X="248" Y="-143" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
+                    </Border>
+
+                    <Border p:Name="cell_2_1_1" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_1_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_1_1_tran" X="291" Y="-186" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_2_1_2" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_1_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_1_2_tran" X="334" Y="-229" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
+                    </Border>
+
+                    <Border p:Name="cell_2_2_0" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_2_0_proj" GlobalOffsetZ="0" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_2_0_tran" X="248" Y="-286" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+                    <Border p:Name="cell_2_2_1" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_2_1_proj" GlobalOffsetZ="-100" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_2_1_tran" X="291" Y="-329" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
+                    </Border>
+
+                    <Border p:Name="cell_2_2_2" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+            		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
+            		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
+                        <Border.Projection>
+                            <PlaneProjection p:Name="cell_2_2_2_proj" GlobalOffsetZ="-200" GlobalOffsetY="0" GlobalOffsetX="0" />
+                        </Border.Projection>
+                        <Border.RenderTransform>
+                            <TranslateTransform p:Name="cell_2_2_2_tran" X="334" Y="-372" />
+                        </Border.RenderTransform>
+                        <Border.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
+                        </Border.Resources>
+
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                    </Border>
+
+
+                    <!-- TapPad 0,0,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_0_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="40,402,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,0,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_0_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="83,357,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,0,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_0_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="118,312,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,1,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_1_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="40,260,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,1,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_1_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="83,215,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,1,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_1_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="118,170,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,2,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_2_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="40,115,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,2,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_2_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="83,70,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,2,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_2_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="118,25,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,0,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_0_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="165,402,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,0,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_0_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="206,357,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,0,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_0_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="241,312,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,1,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_1_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="165,260,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,1,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_1_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="206,215,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,1,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_1_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="241,170,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,2,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_2_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="165,115,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,2,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_2_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="206,70,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,2,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_2_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="241,25,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,0,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_0_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="290,402,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,0,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_0_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="329,357,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,0,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_0_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="364,312,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,1,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_1_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="290,260,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,1,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_1_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="329,215,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,1,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_1_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="364,170,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,2,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_2_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="290,115,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,2,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_2_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="329,70,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,2,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_2_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="364,25,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                </Grid>
+                <Slider Height="477"
+                	Minimum="0" Maximum="5" Orientation="Vertical" SmallChange="1" 
+                	VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                	ValueChanged="slider_valueChanged" p:Name="planeSelectSliderRight" 
+                    Margin="0,0,20,0" Visibility="Visible">
+                    <Slider.RenderTransform>
+                        <!-- Off screen by default. Animates in -->
+                        <TranslateTransform p:Name="planeSelectSliderRight_tran" 
+                                            X="{StaticResource rightSliderInitialXOffset}" 
+                                            Y="0" />
+                    </Slider.RenderTransform>
+                </Slider>
+                <!--<Image Source="/Assets/AlignmentGrid.png" VerticalAlignment="Top" Height="800" Width="480" Margin="0,-32,0,0" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" />-->
+            </StackPanel>
+
+            <phone:Pivot x:Name="numPicker"
+                     VerticalAlignment="Bottom" CharacterSpacing="0" FontSize="12"
+                     SelectionChanged="numPickerChanged" VerticalContentAlignment="Center"
+                     Visibility="Visible" Grid.Row="1" Height="121" Loaded="numPicker_Loaded"
+                     Margin="-10,0,0,0">
+                <phone:Pivot.RenderTransform>
+                    <TranslateTransform p:Name="numPicker_tran" 
+                                        Y="{StaticResource numPickerInitialYOffset}" 
+                                        X="0" />
+                </phone:Pivot.RenderTransform>
+
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">1</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">2</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">3</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">4</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">5</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">6</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">7</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">8</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+                <phone:PivotItem CacheMode="{p:Null}">
+                    <phone:PivotItem.Header>
+                        <TextBlock FontSize="62">9</TextBlock>
+                    </phone:PivotItem.Header>
+                </phone:PivotItem>
+            </phone:Pivot>
+
+        </Grid>
+    </Canvas>
+
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Default" Opacity="1.0" >
+
+            <shell:ApplicationBarIconButton IconUri="/Resources/Images/left.png" Text="undo" Click="ApplicationBarIconButton_Click_0" />
+            <shell:ApplicationBarIconButton IconUri="/Resources/Images/right.png" Text="redo" Click="ApplicationBarIconButton_Click_1" />
+            <shell:ApplicationBarIconButton IconUri="/Resources/Images/help.png" Text="help" Click="ApplicationBarIconButton_Click_2" />
+            <shell:ApplicationBarIconButton IconUri="/Resources/Images/settings.png" Text="settings" Click="ApplicationBarIconButton_Click_3" />
+
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="tell David how awesome this is" />
+                <shell:ApplicationBarMenuItem Text="this is the best ever" />
+            </shell:ApplicationBar.MenuItems>
+
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+</phone:PhoneApplicationPage>
+
+
