@@ -55,8 +55,8 @@
                 <!--<Color x:Key="userEnteredColor"></Color>-->
 
                 <System:Double p:Key="tappadHeight">40</System:Double>
-                <System:Double p:Key="tappadWidth">60</System:Double>
-                <System:Double p:Key="tappadOpacity">0.2</System:Double>
+                <System:Double p:Key="tappadWidth">90</System:Double>
+                <System:Double p:Key="tappadOpacity">0</System:Double>
 
                 <System:Double x:Key="sharedFrom">0</System:Double>
                 <System:Double x:Key="sharedTo">100</System:Double>
@@ -1035,6 +1035,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1053,6 +1054,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="6" />
@@ -1071,6 +1073,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="9" />
@@ -1089,6 +1092,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
@@ -1107,6 +1111,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
@@ -1125,6 +1130,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="3" />
@@ -1143,6 +1149,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1161,6 +1168,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1179,6 +1187,7 @@
                             <System:Int32 x:Key="HomeX">0</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
@@ -1197,6 +1206,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
@@ -1215,6 +1225,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
@@ -1233,6 +1244,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1251,6 +1263,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1269,6 +1282,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1287,6 +1301,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
@@ -1305,6 +1320,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
@@ -1323,6 +1339,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1341,6 +1358,7 @@
                             <System:Int32 x:Key="HomeX">1</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1359,6 +1377,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1377,6 +1396,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
@@ -1395,6 +1415,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">0</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
@@ -1413,6 +1434,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
@@ -1431,6 +1453,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1449,6 +1472,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">1</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
@@ -1467,6 +1491,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">0</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
@@ -1485,6 +1510,7 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">1</System:Int32>
+                            <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
@@ -1503,38 +1529,11 @@
                             <System:Int32 x:Key="HomeX">2</System:Int32>
                             <System:Int32 x:Key="HomeY">2</System:Int32>
                             <System:Int32 x:Key="HomeZ">2</System:Int32>
+                            <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
                     </Border>
-                    
-                    <!--<Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="40,402,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="165,402,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy1" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="290,402,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy2" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="83,357,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy3" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="206,357,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy4" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="329,357,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy5" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="118,312,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy6" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="241,312,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy7" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="364,312,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy8" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="40,260,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy9" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="165,260,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy10" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="290,260,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy11" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="83,215,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy12" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="206,215,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy13" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="329,215,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy14" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="118,170,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy15" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="241,170,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy16" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="364,170,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy17" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="40,115,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy18" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="165,115,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy19" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="290,115,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy20" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="83,70,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy21" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="206,70,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy22" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="329,70,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy23" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="118,25,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy24" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="241,25,0,0" Fill="Bisque" />
-                    <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy25" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="364,25,0,0" Fill="Bisque" />-->
 
 
                     <!-- TapPad 0,0,0 -->
@@ -1564,7 +1563,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="75"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="83,357,0,0" 
            Fill="Bisque">
@@ -1583,7 +1582,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="82"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="118,312,0,0" 
            Fill="Bisque">
@@ -1640,7 +1639,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="82"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="118,170,0,0" 
            Fill="Bisque">
@@ -1659,7 +1658,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="81"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="40,115,0,0" 
            Fill="Bisque">
@@ -1678,7 +1677,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="75"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="83,70,0,0" 
            Fill="Bisque">
@@ -1697,7 +1696,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="82"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="118,25,0,0" 
            Fill="Bisque">
@@ -1735,7 +1734,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="76"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="206,357,0,0" 
            Fill="Bisque">
@@ -1754,7 +1753,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="85"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="241,312,0,0" 
            Fill="Bisque">
@@ -1811,7 +1810,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="85"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="241,170,0,0" 
            Fill="Bisque">
@@ -1830,7 +1829,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="84"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="165,115,0,0" 
            Fill="Bisque">
@@ -1849,7 +1848,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="76"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="206,70,0,0" 
            Fill="Bisque">
@@ -1868,7 +1867,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="85"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="241,25,0,0" 
            Fill="Bisque">
@@ -1906,7 +1905,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="73"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="329,357,0,0" 
            Fill="Bisque">
@@ -1925,7 +1924,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="67"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="364,312,0,0" 
            Fill="Bisque">
@@ -1963,7 +1962,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="73"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="329,215,0,0" 
            Fill="Bisque">
@@ -1982,7 +1981,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="67"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="364,170,0,0" 
            Fill="Bisque">
@@ -2001,7 +2000,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="79"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="290,115,0,0" 
            Fill="Bisque">
@@ -2020,7 +2019,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="73"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="329,70,0,0" 
            Fill="Bisque">
@@ -2039,7 +2038,7 @@
            Hold="cell_Hold" 
            HorizontalAlignment="Left" 
            Height="{StaticResource tappadHeight}" 
-           Width="67"  
+           Width="{StaticResource tappadWidth}"  
            VerticalAlignment="Top" 
            Margin="364,25,0,0" 
            Fill="Bisque">

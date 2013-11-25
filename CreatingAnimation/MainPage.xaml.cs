@@ -99,6 +99,7 @@ namespace Cuboku
 
         bool sliderShowing = false;
         bool pickerShowing = false;
+        bool isGlowing = false;
 
         enum Direction { Left, Right, Up, Down };
 
@@ -174,7 +175,7 @@ namespace Cuboku
             dragCoordinates = new MirroredCubeView<Translation<double>>();
             Mappers.forEach<Translation<double>, Translation<double>>(dragCoordinates, coordinates, Mappers.setEqual);
 
-            rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, placesRotated };
+            rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, placesRotated, cells };
         }
 
         void doAfter(Action what, int milliseconds)
@@ -250,12 +251,21 @@ namespace Cuboku
                 cell = e.OriginalSource as Border;
             else if (e.OriginalSource.GetType() == typeof(TextBlock))
                 cell = (e.OriginalSource as TextBlock).Parent as Border;
+            else if (e.OriginalSource.GetType() == typeof(Rectangle))
+                cell = cellFromTapPad(e.OriginalSource as Rectangle);
             else 
             {
                 Debug.WriteLine("Holding unexpected type {0}", e.OriginalSource.GetType());
                 return;
             }
 
+            cell_Tap(cell, null);
+
+            if (isGlowing)
+                return;
+            // Otherwise...
+
+            isGlowing = !isGlowing;
             SliderInOut.Begin();
 
             int x = (int)cell.Resources["HomeX"];
@@ -263,18 +273,16 @@ namespace Cuboku
             int z = (int)cell.Resources["HomeZ"];
 
             // Mappers.forEachThat(places, Mappers.inYZDiag, (CellPlacer place) => { place.z += 200; });
-
             // Mappers.forEachThat(colors, Mappers.inYZDiag, (SolidColorBrush brush) => { brush.Color = Colors.Cyan; });
-            Mappers.forEachThat(cells, Mappers.inYZDiag,
-                                (Border c) => { // (c.Background as SolidColorBrush).Color = Colors.Cyan;
+
+            Mappers.forEachThat(cells.original, Mappers.inYZDiag,
+                                (Border c) => { 
                                                 c.Background = new SolidColorBrush(Colors.Cyan);
-                                                // ((c.Child as TextBlock).Foreground as SolidColorBrush).Color = Color.FromArgb(0xFF, 47, 79, 79); });
-                                                (c.Child as TextBlock).Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 47, 79, 79)); });
-            Mappers.forEachThat(cells, 
+                                                (c.Child as TextBlock).Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 47, 79, 79)); 
+                                });
+            Mappers.forEachThat(cells.original, 
                                 (i, j, k) => !Mappers.inYZDiag(i, j, k), 
                                 (Border c) => { c.Opacity = 0.6; });
-
-            // TODO: select the one just clicked.
         }
 
         private void storyBoard_Completed(object sender, EventArgs e)
@@ -357,15 +365,20 @@ namespace Cuboku
         bool presetCell(Border cell)
         {
             // TODO: Use cell.Resources[Home*] instead of colors
-            Color cellColor = ((cell.Child as TextBlock).Foreground as SolidColorBrush).Color;
-            Color userSuppliedColor = Color.FromArgb(0xFF, 0x70, 0x80, 0x90);
-            bool isPreset = ! Color.Equals(cellColor, userSuppliedColor);
-            Debug.WriteLine("isPreset={0} cell color={1} user supplied color={2}", isPreset, cellColor, userSuppliedColor);
-            return isPreset;
+            //Color cellColor = ((cell.Child as TextBlock).Foreground as SolidColorBrush).Color;
+            //Color userSuppliedColor = Color.FromArgb(0xFF, 0x70, 0x80, 0x90);
+            //bool isPreset = ! Color.Equals(cellColor, userSuppliedColor);
+            //Debug.WriteLine("isPreset={0} cell color={1} user supplied color={2}", isPreset, cellColor, userSuppliedColor);
+            //return isPreset;
+            bool ret = cell.Resources["isPreset"].ToString() == "True";
+            Debug.WriteLine("Is this cell preset? {0}", ret);
+            return ret;
         }
 
         private void cell_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            // Note: e is not used.
+
             Border cell = sender as Border;
             TextBlock block = cell.Child as TextBlock;
             if (cell == selected)
@@ -376,6 +389,13 @@ namespace Cuboku
                         block.Text = (numPicker.SelectedIndex + 1).ToString();
                     else
                         block.Text = "";
+                    if (!pickerShowing)
+                        PickerInOut.Begin();
+                }
+                else
+                {
+                    if (pickerShowing)
+                        PickerInOut.Begin();
                 }
             }
             else
@@ -384,6 +404,8 @@ namespace Cuboku
                 if (presetCell(cell))
                 {
                     selected = cell;
+                    if (pickerShowing)
+                        PickerInOut.Begin();
                 }
                 else
                 {
@@ -391,10 +413,9 @@ namespace Cuboku
                     string numberText = block.Text;
                     if (numberText.Length != 0)
                         numPicker.SelectedIndex = int.Parse(numberText) - 1;
+                    if (!pickerShowing)
+                        PickerInOut.Begin();
                 }
-                
-                if (!pickerShowing)
-                    PickerInOut.Begin();
             }
 
             PlaneProjection proj = cell.Projection as PlaneProjection;
@@ -707,16 +728,19 @@ namespace Cuboku
             Debug.WriteLine("LayoutRoot tap");
         }
 
-        int taps = 0;
+        private Border cellFromTapPad(Rectangle pad)
+        {
+            int x = (int)pad.Resources["HomeX"];
+            int y = (int)pad.Resources["HomeY"];
+            int z = (int)pad.Resources["HomeZ"];
+
+            return cells.mirror[x, y, z];
+        }
+
         private void nut_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            Debug.WriteLine("   ********* Tapeth thine nuts for {0} times *********", ++taps);
-
             Rectangle rec = sender as Rectangle;
-            if (rec.Opacity == 0)
-                rec.Opacity = 100;
-            else
-                rec.Opacity = 0;
+            cell_Tap(cellFromTapPad(rec), null);
         }
     }
 }
