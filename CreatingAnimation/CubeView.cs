@@ -34,6 +34,28 @@ namespace Cuboku
                                                                        { 0, 1,  0 } });
     }
 
+    public interface RotatableCovariant
+    {
+        void rotateLhZ();
+        void rotateRhZ();
+        void rotateLhY();
+        void rotateRhY();
+        void rotateLhX();
+        void rotateRhX();
+    }
+
+    public interface  RotatableContravariant
+    {
+        void rotateLhZConjugate();
+        void rotateRhZConjugate();
+        void rotateLhYConjugate();
+        void rotateRhYConjugate();
+        void rotateLhXConjugate();
+        void rotateRhXConjugate();
+    }
+
+    public interface Rotatable : RotatableCovariant, RotatableContravariant {}
+
     class CubeView<T> where T : new()
     {
         protected T[,,] target;
@@ -86,7 +108,7 @@ namespace Cuboku
         }
     }
 
-    class RotatableCubeView<T> : CubeView<T> where T : new()
+    class RotatableCubeView<T> : CubeView<T>, Rotatable where T : new()
     {
         public RotatableCubeView(T[,,] dataToView) : base(dataToView)
         {}
@@ -94,19 +116,19 @@ namespace Cuboku
         public RotatableCubeView() : base()
         {}
 
-        public RotatableCubeView<T> rotateLhZ() { transformation = Rotations.lhZ * transformation; return this; }
-        public RotatableCubeView<T> rotateRhZ() { transformation = Rotations.rhZ * transformation; return this; }
-        public RotatableCubeView<T> rotateLhY() { transformation = Rotations.lhY * transformation; return this; }
-        public RotatableCubeView<T> rotateRhY() { transformation = Rotations.rhY * transformation; return this; }
-        public RotatableCubeView<T> rotateLhX() { transformation = Rotations.lhX * transformation; return this; }
-        public RotatableCubeView<T> rotateRhX() { transformation = Rotations.rhX * transformation; return this; }
+        public void rotateLhZ() { transformation = Rotations.lhZ * transformation; }
+        public void rotateRhZ() { transformation = Rotations.rhZ * transformation; }
+        public void rotateLhY() { transformation = Rotations.lhY * transformation; }
+        public void rotateRhY() { transformation = Rotations.rhY * transformation; }
+        public void rotateLhX() { transformation = Rotations.lhX * transformation; }
+        public void rotateRhX() { transformation = Rotations.rhX * transformation; }
 
-        public RotatableCubeView<T> rotateLhZConjugate() { transformation = transformation * Rotations.lhZ; return this; }
-        public RotatableCubeView<T> rotateRhZConjugate() { transformation = transformation * Rotations.rhZ; return this; }
-        public RotatableCubeView<T> rotateLhYConjugate() { transformation = transformation * Rotations.lhY; return this; }
-        public RotatableCubeView<T> rotateRhYConjugate() { transformation = transformation * Rotations.rhY; return this; }
-        public RotatableCubeView<T> rotateLhXConjugate() { transformation = transformation * Rotations.lhX; return this; }
-        public RotatableCubeView<T> rotateRhXConjugate() { transformation = transformation * Rotations.rhX; return this; }
+        public void rotateLhZConjugate() { transformation = transformation * Rotations.lhZ; }
+        public void rotateRhZConjugate() { transformation = transformation * Rotations.rhZ; }
+        public void rotateLhYConjugate() { transformation = transformation * Rotations.lhY; }
+        public void rotateRhYConjugate() { transformation = transformation * Rotations.rhY; }
+        public void rotateLhXConjugate() { transformation = transformation * Rotations.lhX; }
+        public void rotateRhXConjugate() { transformation = transformation * Rotations.rhX; }
         public RotatableCubeView<T> invert() { transformation = transformation.Invert(); return this; }
 
         public T[,,] data {
@@ -114,10 +136,11 @@ namespace Cuboku
         }
     }
 
-    class MirroredCubeView<T> where T : new()
+    class MirroredCubeView<T> : RotatableCovariant where T : new()
     {
         RotatableCubeView<T> _primary;
         RotatableCubeView<T> _mirror;
+        CubeView<T> _original;
 
         public static int sideLength {
             get { return RotatableCubeView<T>.sideLength; }
@@ -131,32 +154,30 @@ namespace Cuboku
             return mcv._primary; 
         }
 
-        public CubeView<T> mirror() { return _mirror; }
+        public CubeView<T> mirror { get { return _mirror; } }
+        public CubeView<T> original { get { return _original; } }
 
-        public MirroredCubeView<T> rotateLhZ() { _primary.rotateLhZ(); _mirror.rotateRhZConjugate(); return this; }
-        public MirroredCubeView<T> rotateRhZ() { _primary.rotateRhZ(); _mirror.rotateLhZConjugate(); return this; }
-        public MirroredCubeView<T> rotateLhY() { _primary.rotateLhY(); _mirror.rotateRhYConjugate(); return this; }
-        public MirroredCubeView<T> rotateRhY() { _primary.rotateRhY(); _mirror.rotateLhYConjugate(); return this; }
-        public MirroredCubeView<T> rotateLhX() { _primary.rotateLhX(); _mirror.rotateRhXConjugate(); return this; }
-        public MirroredCubeView<T> rotateRhX() { _primary.rotateRhX(); _mirror.rotateLhXConjugate(); return this; }
+        public T[,,] data { get { return _primary.data; } } // _original, _primary, and _mirror all share the same data.
 
-        public MirroredCubeView<T> rotateOppositeLhZ() { _mirror.rotateLhZ(); _primary.rotateRhZConjugate(); return this; }
-        public MirroredCubeView<T> rotateOppositeRhZ() { _mirror.rotateRhZ(); _primary.rotateLhZConjugate(); return this; }
-        public MirroredCubeView<T> rotateOppositeLhY() { _mirror.rotateLhY(); _primary.rotateRhYConjugate(); return this; }
-        public MirroredCubeView<T> rotateOppositeRhY() { _mirror.rotateRhY(); _primary.rotateLhYConjugate(); return this; }
-        public MirroredCubeView<T> rotateOppositeLhX() { _mirror.rotateLhX(); _primary.rotateRhXConjugate(); return this; }
-        public MirroredCubeView<T> rotateOppositeRhX() { _mirror.rotateRhX(); _primary.rotateLhXConjugate(); return this; }
+        public void rotateLhZ() { _primary.rotateLhZ(); _mirror.rotateRhZConjugate(); }
+        public void rotateRhZ() { _primary.rotateRhZ(); _mirror.rotateLhZConjugate(); }
+        public void rotateLhY() { _primary.rotateLhY(); _mirror.rotateRhYConjugate(); }
+        public void rotateRhY() { _primary.rotateRhY(); _mirror.rotateLhYConjugate(); }
+        public void rotateLhX() { _primary.rotateLhX(); _mirror.rotateRhXConjugate(); }
+        public void rotateRhX() { _primary.rotateRhX(); _mirror.rotateLhXConjugate(); }
 
         public MirroredCubeView(T[,,] dataToView)
         {
             _primary = new RotatableCubeView<T>(dataToView);
             _mirror =  new RotatableCubeView<T>(dataToView);
+            _original =  new RotatableCubeView<T>(dataToView);
         }
 
         public MirroredCubeView()
         {
             _primary = new RotatableCubeView<T>();
             _mirror = new RotatableCubeView<T>(_primary.data);
+            _original = new RotatableCubeView<T>(_primary.data);
         }
 
         public T this[int i, int j, int k] {

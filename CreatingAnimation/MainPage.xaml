@@ -56,7 +56,7 @@
 
                 <System:Double p:Key="tappadHeight">40</System:Double>
                 <System:Double p:Key="tappadWidth">60</System:Double>
-                <System:Double p:Key="tappadOpacity">0</System:Double>
+                <System:Double p:Key="tappadOpacity">0.2</System:Double>
 
                 <System:Double x:Key="sharedFrom">0</System:Double>
                 <System:Double x:Key="sharedTo">100</System:Double>
@@ -1507,6 +1507,7 @@
 
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
                     </Border>
+                    
                     <!--<Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="40,402,0,0" Fill="Bisque" />
                     <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="165,402,0,0" Fill="Bisque" />
                     <Rectangle Tap="nut_Tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy1" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="290,402,0,0" Fill="Bisque" />
@@ -1534,6 +1535,521 @@
                     <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy23" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="118,25,0,0" Fill="Bisque" />
                     <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy24" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="241,25,0,0" Fill="Bisque" />
                     <Rectangle Tap="nut_tap" Opacity="{StaticResource tappadOpacity}" p:Name="tappad_0_0_0_Copy25" Hold="cell_Hold" HorizontalAlignment="Left" Height="{StaticResource tappadHeight}" Width="{StaticResource tappadWidth}"  VerticalAlignment="Top" Margin="364,25,0,0" Fill="Bisque" />-->
+
+
+                    <!-- TapPad 0,0,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_0_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="40,402,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,0,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_0_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="75"  
+           VerticalAlignment="Top" 
+           Margin="83,357,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,0,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_0_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="82"  
+           VerticalAlignment="Top" 
+           Margin="118,312,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,1,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_1_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="40,260,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,1,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_1_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="83,215,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,1,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_1_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="82"  
+           VerticalAlignment="Top" 
+           Margin="118,170,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,2,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_2_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="81"  
+           VerticalAlignment="Top" 
+           Margin="40,115,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,2,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_2_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="75"  
+           VerticalAlignment="Top" 
+           Margin="83,70,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 0,2,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_0_2_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="82"  
+           VerticalAlignment="Top" 
+           Margin="118,25,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">0</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,0,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_0_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="165,402,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,0,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_0_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="76"  
+           VerticalAlignment="Top" 
+           Margin="206,357,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,0,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_0_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="85"  
+           VerticalAlignment="Top" 
+           Margin="241,312,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,1,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_1_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="165,260,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,1,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_1_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="206,215,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,1,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_1_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="85"  
+           VerticalAlignment="Top" 
+           Margin="241,170,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,2,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_2_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="84"  
+           VerticalAlignment="Top" 
+           Margin="165,115,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,2,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_2_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="76"  
+           VerticalAlignment="Top" 
+           Margin="206,70,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 1,2,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_1_2_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="85"  
+           VerticalAlignment="Top" 
+           Margin="241,25,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">1</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,0,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_0_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="290,402,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,0,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_0_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="73"  
+           VerticalAlignment="Top" 
+           Margin="329,357,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,0,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_0_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="67"  
+           VerticalAlignment="Top" 
+           Margin="364,312,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">0</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,1,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_1_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="{StaticResource tappadWidth}"  
+           VerticalAlignment="Top" 
+           Margin="290,260,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,1,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_1_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="73"  
+           VerticalAlignment="Top" 
+           Margin="329,215,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,1,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_1_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="67"  
+           VerticalAlignment="Top" 
+           Margin="364,170,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">1</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,2,0 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_2_0" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="79"  
+           VerticalAlignment="Top" 
+           Margin="290,115,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">0</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,2,1 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_2_1" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="73"  
+           VerticalAlignment="Top" 
+           Margin="329,70,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">1</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
+                    <!-- TapPad 2,2,2 -->
+
+                    <Rectangle Tap="nut_Tap" 
+           Opacity="{StaticResource tappadOpacity}" 
+           p:Name="tappad_2_2_2" 
+           Hold="cell_Hold" 
+           HorizontalAlignment="Left" 
+           Height="{StaticResource tappadHeight}" 
+           Width="67"  
+           VerticalAlignment="Top" 
+           Margin="364,25,0,0" 
+           Fill="Bisque">
+                        <Rectangle.Resources>
+                            <System:Int32 x:Key="HomeX">2</System:Int32>
+                            <System:Int32 x:Key="HomeY">2</System:Int32>
+                            <System:Int32 x:Key="HomeZ">2</System:Int32>
+                        </Rectangle.Resources>
+                    </Rectangle>
+
                 </Grid>
                 <Slider Height="477"
                 	Minimum="0" Maximum="5" Orientation="Vertical" SmallChange="1" 

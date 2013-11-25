@@ -90,9 +90,12 @@ namespace Cuboku
         MirroredCubeView<Translation<double>> coordinates;
         MirroredCubeView<Translation<double>> dragCoordinates;
         MirroredCubeView<CellPlacer> places;
+        MirroredCubeView<CellPlacer> placesRotated;
         MirroredCubeView<TranslationAnimation> animations;
         MirroredCubeView<SolidColorBrush> colors;
         MirroredCubeView<Border> cells;
+
+        RotatableCovariant[] rotationSubscribers;
 
         bool sliderShowing = false;
         bool pickerShowing = false;
@@ -125,6 +128,7 @@ namespace Cuboku
                       {new CellPlacer(cell_2_1_0_tran, cell_2_1_0_proj), new CellPlacer(cell_2_1_1_tran, cell_2_1_1_proj), new CellPlacer(cell_2_1_2_tran, cell_2_1_2_proj)}, 
                       {new CellPlacer(cell_2_2_0_tran, cell_2_2_0_proj), new CellPlacer(cell_2_2_1_tran, cell_2_2_1_proj), new CellPlacer(cell_2_2_2_tran, cell_2_2_2_proj)} }
                 });
+            placesRotated = new MirroredCubeView<CellPlacer>(places.data);
 
             animations = new MirroredCubeView<TranslationAnimation>(
                 new TranslationAnimation[,,] {
@@ -169,6 +173,8 @@ namespace Cuboku
             initializeCoordinates(coordinates);
             dragCoordinates = new MirroredCubeView<Translation<double>>();
             Mappers.forEach<Translation<double>, Translation<double>>(dragCoordinates, coordinates, Mappers.setEqual);
+
+            rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, placesRotated };
         }
 
         void doAfter(Action what, int milliseconds)
@@ -282,17 +288,13 @@ namespace Cuboku
             Mappers.forEach<TranslationAnimation, Translation<double>>(animations, dragCoordinates, Mappers.setFromOfAnimation);
 
             switch(dir) {
-                case Direction.Left:  coordinates.rotateLhY(); 
-                                      dragCoordinates.rotateLhY();
+                case Direction.Left:  foreach (var cube in rotationSubscribers) cube.rotateLhY();
                                       break;
-                case Direction.Right: coordinates.rotateRhY(); 
-                                      dragCoordinates.rotateRhY(); 
+                case Direction.Right: foreach (var cube in rotationSubscribers) cube.rotateRhY(); 
                                       break;
-                case Direction.Up:    coordinates.rotateRhX();
-                                      dragCoordinates.rotateRhX();
+                case Direction.Up:    foreach (var cube in rotationSubscribers) cube.rotateRhX();
                                       break;
-                case Direction.Down:  coordinates.rotateLhX();
-                                      dragCoordinates.rotateLhX();
+                case Direction.Down:  foreach (var cube in rotationSubscribers) cube.rotateLhX();
                                       break;
             }
             
@@ -493,18 +495,18 @@ namespace Cuboku
                 foreach (int j in Enumerable.Range(0, len))
                     foreach (int k in Enumerable.Range(0, len))
                     {
-                        CellPlacer place = places[i, j, k];
-                        Translation<double> point = dragCoordinates.mirror()[i, j, k];
+                        Translation<double> point = dragCoordinates.original[i, j, k];
 
                         switch (k) {
-                            case 0: point.x = place.x += e.DeltaManipulation.Translation.X * scale;
-                                    point.y = place.y += e.DeltaManipulation.Translation.Y * scale;
+                            case 0: point.x += e.DeltaManipulation.Translation.X * scale;
+                                    point.y += e.DeltaManipulation.Translation.Y * scale;
                                     break;
-                            case 2: point.x = place.x -= e.DeltaManipulation.Translation.X * scale;
-                                    point.y = place.y -= e.DeltaManipulation.Translation.Y * scale;
+                            case 2: point.x -= e.DeltaManipulation.Translation.X * scale;
+                                    point.y -= e.DeltaManipulation.Translation.Y * scale;
                                     break;
                         }
                     }
+            Mappers.forEach<CellPlacer, Translation<double>>(places, dragCoordinates, Mappers.setPlace);
         }
 
         // Length of hypotenuse
@@ -657,7 +659,7 @@ namespace Cuboku
         {
             // startOpeningAnimation();
 
-            animationTime = 10; // 3.0;
+            animationTime = 3.0;
             doRotation(Direction.Up);
 
             doAfter(() => {
