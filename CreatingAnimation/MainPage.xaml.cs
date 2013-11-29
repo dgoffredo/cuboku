@@ -90,7 +90,6 @@ namespace Cuboku
         MirroredCubeView<Translation<double>> coordinates;
         MirroredCubeView<Translation<double>> dragCoordinates;
         MirroredCubeView<CellPlacer> places;
-        MirroredCubeView<CellPlacer> placesRotated;
         MirroredCubeView<TranslationAnimation> animations;
         MirroredCubeView<SolidColorBrush> colors;
         MirroredCubeView<Border> cells;
@@ -129,7 +128,6 @@ namespace Cuboku
                       {new CellPlacer(cell_2_1_0_tran, cell_2_1_0_proj), new CellPlacer(cell_2_1_1_tran, cell_2_1_1_proj), new CellPlacer(cell_2_1_2_tran, cell_2_1_2_proj)}, 
                       {new CellPlacer(cell_2_2_0_tran, cell_2_2_0_proj), new CellPlacer(cell_2_2_1_tran, cell_2_2_1_proj), new CellPlacer(cell_2_2_2_tran, cell_2_2_2_proj)} }
                 });
-            placesRotated = new MirroredCubeView<CellPlacer>(places.data);
 
             animations = new MirroredCubeView<TranslationAnimation>(
                 new TranslationAnimation[,,] {
@@ -175,7 +173,7 @@ namespace Cuboku
             dragCoordinates = new MirroredCubeView<Translation<double>>();
             Mappers.forEach<Translation<double>, Translation<double>>(dragCoordinates, coordinates, Mappers.setEqual);
 
-            rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, placesRotated, cells };
+            rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, cells };
         }
 
         void doAfter(Action what, int milliseconds)
@@ -230,6 +228,7 @@ namespace Cuboku
         Border selected = null;
         bool justSelected = false;
         bool dragging = false;
+        bool stoppingDueToGesture = false;
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -322,6 +321,10 @@ namespace Cuboku
             Mappers.forEach<CellPlacer, Translation<double>>(places, coordinates, Mappers.setPlace);
             Mappers.forEach<Translation<double>, Translation<double>>(dragCoordinates, coordinates, Mappers.setEqual);
             Twistidoo.Stop();
+            if (stoppingDueToGesture)
+                stoppingDueToGesture = false;
+            else
+                background_anim.Resume();
         }
 
         private void doRotation(Direction dir)
@@ -329,18 +332,13 @@ namespace Cuboku
             if (Twistidoo.GetCurrentState() != ClockState.Stopped)
             {
                 Debug.WriteLine("Stopping...");
+                stoppingDueToGesture = true;  // necessary here?
                 stopRotation();
+                stoppingDueToGesture = false;
             }
 
-            try
-            {
-                Debug.WriteLine("Starting...");
-                startRotation(dir);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Look at what you did. {0}", ex);
-            } 
+            Debug.WriteLine("Starting...");
+            startRotation(dir);
         }
 
         private void setAnimationTime(double seconds = 2.0)
@@ -489,23 +487,28 @@ namespace Cuboku
 
         private void PhoneApplicationPage_ManipulationStarted(object sender, System.Windows.Input.ManipulationStartedEventArgs e)
         {
-            UIElement elem = e.ManipulationContainer;
             Debug.WriteLine("Begin gesture.");
+            background_anim.Pause();
         }
 
         DateTime lastDelta;
         private void PhoneApplicationPage_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
         {
-            if (lastDelta == null)
-                lastDelta = DateTime.Now;
-
             DateTime now = DateTime.Now;
+            
+            Debug.WriteLine("PinchManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.PinchManipulation));
+            Debug.WriteLine("DeltaManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation));
+
+            if (lastDelta == null)
+                lastDelta = now;
+
             double secs = (now - lastDelta).TotalSeconds;
             lastDelta = now; // for next time
 
             if (Twistidoo.GetCurrentState() != ClockState.Stopped)
             {
                 Debug.WriteLine("Stopping...");
+                stoppingDueToGesture = true;
                 stopRotation();
             }
 
@@ -517,14 +520,60 @@ namespace Cuboku
                     foreach (int k in Enumerable.Range(0, len))
                     {
                         Translation<double> point = dragCoordinates.original[i, j, k];
+                        Translation<double> orig = coordinates.original[i,j,k];
 
-                        switch (k) {
-                            case 0: point.x += e.DeltaManipulation.Translation.X * scale;
-                                    point.y += e.DeltaManipulation.Translation.Y * scale;
-                                    break;
-                            case 2: point.x -= e.DeltaManipulation.Translation.X * scale;
-                                    point.y -= e.DeltaManipulation.Translation.Y * scale;
-                                    break;
+                        if (e.PinchManipulation == null)
+                        {
+                            // If the user is dragging the cube around, move the front
+                            // and back planes in opposite directions.
+                            switch (k) {
+                                case 0: point.x += e.DeltaManipulation.Translation.X * scale;
+                                        point.y += e.DeltaManipulation.Translation.Y * scale;
+                                        break;
+                                case 2: point.x -= e.DeltaManipulation.Translation.X * scale;
+                                        point.y -= e.DeltaManipulation.Translation.Y * scale;
+                                        break;
+                            }
+                        }
+                        else
+                        {
+                            // If the user is pinching the cube, separate the outer
+                            // (top, bottom, left, right) planes from the center,
+                            // or bring them closer.
+                            //double scaleX = e.DeltaManipulation.Scale.X;
+                            //double scaleY = e.DeltaManipulation.Scale.Y;
+                            //if (i == 0) {
+                            //    point.x /= scaleX; // point.x = orig.x / scaleX;
+                            //}
+                            //else if (i == 2) {
+                            //    point.x *= scaleX; // point.x = orig.x * scaleX;
+                            //}
+
+                            //if (j == 0) {
+                            //    point.y *= scaleY; // point.y = orig.y * scaleY;
+                            //}
+                            //else if (j == 2) {
+                            //    point.y /= scaleY; // point.y = orig.y / scaleY;
+                            //}
+
+                            double yDiff = Math.Abs(e.PinchManipulation.Current.PrimaryContact.Y  - e.PinchManipulation.Current.SecondaryContact.Y) -
+                                           Math.Abs(e.PinchManipulation.Original.PrimaryContact.Y - e.PinchManipulation.Original.SecondaryContact.Y);
+
+                            double xDiff = Math.Abs(e.PinchManipulation.Current.PrimaryContact.X  - e.PinchManipulation.Current.SecondaryContact.X) -
+                                           Math.Abs(e.PinchManipulation.Original.PrimaryContact.X - e.PinchManipulation.Original.SecondaryContact.X);
+
+                           switch (i) {
+                                case 0: point.x = orig.x - xDiff * scale;
+                                        break;
+                                case 2: point.x = orig.x + xDiff * scale;
+                                        break;
+                            }
+                            switch (j) {
+                                case 0: point.y = orig.y + yDiff * scale;
+                                        break;
+                                case 2: point.y = orig.y - yDiff * scale;
+                                        break;
+                            }
                         }
                     }
             Mappers.forEach<CellPlacer, Translation<double>>(places, dragCoordinates, Mappers.setPlace);
@@ -563,11 +612,15 @@ namespace Cuboku
                     Debug.WriteLine("Returning to center");
                     startReturn();
                 }
+                else // No animation to wait for, so continue the background one.
+                {
+                    background_anim.Resume();
+                }
             }
             else
             {
                 double scale = 1.0;
-                double seconds = scale * 3.0;
+                double seconds = scale * 5.0;
                 
                 if (speed > 500)
                     seconds = scale * (speed / (-1250) + 50.0 / 125 + 3);
@@ -593,7 +646,10 @@ namespace Cuboku
                         doRotation(Direction.Down);
                 }
                 else
+                {
                     Debug.WriteLine("Can't find the greater translation direction. Not going to rotate.");
+                    startReturn();
+                }
             }
 
             dragging = false; // The manipulation just finished, so the user is not dragging now.
@@ -678,7 +734,7 @@ namespace Cuboku
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            // startOpeningAnimation();
+            // background_pan.Begin();
 
             animationTime = 3.0;
             doRotation(Direction.Up);

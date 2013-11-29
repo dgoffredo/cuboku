@@ -24,6 +24,39 @@
     Loaded="PhoneApplicationPage_Loaded">
 
     <Canvas x:Name="PageCanvas" Tap="PageCanvas_Tap">
+        <Canvas.Resources>
+            <MediaElement x:Name="BackgroundVideo" Source="/Resources/Videos/output.avi" 
+                          x:Key="BackgroundVideo"/>
+        </Canvas.Resources>
+        <Canvas.Background>
+            <!--<VideoBrush SourceName="BackgroundVideo" Stretch="UniformToFill">
+                <VideoBrush.Transform>
+                    <RotateTransform x:Name="background_rotation" Angle="0" />
+                </VideoBrush.Transform>
+            </VideoBrush>-->
+            <ImageBrush ImageSource="/Resources/Images/nebula.png">
+                <ImageBrush.Transform>
+                    <CompositeTransform x:Name="background_tran" ScaleX="1" ScaleY="1" />
+                </ImageBrush.Transform>
+            </ImageBrush>
+        </Canvas.Background>
+        <Canvas.Triggers>
+            <EventTrigger RoutedEvent="Canvas.Loaded">
+                <BeginStoryboard>
+                    <Storyboard x:Name="background_anim" AutoReverse="True" RepeatBehavior="Forever">
+                        <DoubleAnimation Storyboard.TargetName="background_tran"
+                                         Storyboard.TargetProperty="ScaleX"
+                                         Duration="0:10:00"
+                                         From="1" To="1.5" />
+                        <DoubleAnimation Storyboard.TargetName="background_tran"
+                                         Storyboard.TargetProperty="ScaleY"
+                                         Duration="0:10:00"
+                                         From="1" To="2" />
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Canvas.Triggers>
+
         <!--LayoutRoot is the root grid where all page content is placed-->
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel"
@@ -1022,7 +1055,7 @@
                     <!--VerticalAlignment="Bottom" 
                   Margin="-20,-17,0,121">-->
 
-                    <Border p:Name="cell_0_0_0" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_0_0" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1038,10 +1071,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_0_0_1" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_0_1" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1060,7 +1093,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="6" />
                     </Border>
 
-                    <Border p:Name="cell_0_0_2" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_0_2" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1079,7 +1112,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="9" />
                     </Border>
 
-                    <Border p:Name="cell_0_1_0" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_1_0" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1098,7 +1131,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
                     </Border>
 
-                    <Border p:Name="cell_0_1_1" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_1_1" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1117,7 +1150,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
                     </Border>
 
-                    <Border p:Name="cell_0_1_2" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_1_2" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1136,7 +1169,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="3" />
                     </Border>
 
-                    <Border p:Name="cell_0_2_0" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_2_0" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1152,10 +1185,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_0_2_1" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_2_1" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1171,10 +1204,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_0_2_2" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_0_2_2" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1193,7 +1226,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
                     </Border>
 
-                    <Border p:Name="cell_1_0_0" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_0_0" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1212,7 +1245,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
                     </Border>
 
-                    <Border p:Name="cell_1_0_1" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_0_1" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1231,7 +1264,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
                     </Border>
 
-                    <Border p:Name="cell_1_0_2" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_0_2" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1247,10 +1280,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_1_1_0" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_1_0" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1266,10 +1299,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_1_1_1" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_1_1" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1285,10 +1318,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_1_1_2" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_1_2" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1307,7 +1340,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
                     </Border>
 
-                    <Border p:Name="cell_1_2_0" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_2_0" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1326,7 +1359,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
                     </Border>
 
-                    <Border p:Name="cell_1_2_1" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_2_1" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1342,10 +1375,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_1_2_2" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_1_2_2" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1361,10 +1394,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_2_0_0" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_0_0" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1380,10 +1413,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_2_0_1" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_0_1" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1402,7 +1435,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
                     </Border>
 
-                    <Border p:Name="cell_2_0_2" Hold="cell_Hold" Background="#55A500F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_0_2" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1421,7 +1454,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
                     </Border>
 
-                    <Border p:Name="cell_2_1_0" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_1_0" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1440,7 +1473,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
                     </Border>
 
-                    <Border p:Name="cell_2_1_1" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_1_1" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1456,10 +1489,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_2_1_2" Hold="cell_Hold" Background="#5511A5F5" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_1_2" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1478,7 +1511,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
                     </Border>
 
-                    <Border p:Name="cell_2_2_0" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_2_0" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1494,10 +1527,10 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
-                    <Border p:Name="cell_2_2_1" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_2_1" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1516,7 +1549,7 @@
                         <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
                     </Border>
 
-                    <Border p:Name="cell_2_2_2" Hold="cell_Hold" Background="#5511FF99" HorizontalAlignment="Left" 
+                    <Border p:Name="cell_2_2_2" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
             		Height="{StaticResource cellHeight}" Width="{StaticResource cellWidth}"  
             		VerticalAlignment="Top" Tap="cell_Tap" Margin="49,402,0,0">
                         <Border.Projection>
@@ -1532,7 +1565,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="SlateGray" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
                     </Border>
 
 
