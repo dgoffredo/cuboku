@@ -12,9 +12,11 @@ using Cuboku.Resources;
 using System.Windows.Media.Animation;
 using System.Windows.Media;
 using System.Windows.Input;
+using Windows.Phone.Devices.Notification;
 using Debug = System.Diagnostics.Debug;
 using TranslationAnimation = Cuboku.Translation<System.Windows.Media.Animation.DoubleAnimation>;
 using Rectangle = System.Windows.Shapes.Rectangle;
+using Plane = Cuboku.Planes.Plane;
 
 namespace Cuboku
 {
@@ -91,10 +93,14 @@ namespace Cuboku
         MirroredCubeView<Translation<double>> dragCoordinates;
         MirroredCubeView<CellPlacer> places;
         MirroredCubeView<TranslationAnimation> animations;
-        MirroredCubeView<SolidColorBrush> colors;
+        MirroredCubeView<SolidColorBrush> bgColors;
+        MirroredCubeView<TextBlock> numbers;
         MirroredCubeView<Border> cells;
 
         RotatableCovariant[] rotationSubscribers;
+
+        Plane[] planes = Planes.makePlanes();
+        CyclicIterator<Plane> currentPlane = null;
 
         bool sliderShowing = false;
         bool pickerShowing = false;
@@ -116,6 +122,8 @@ namespace Cuboku
             // Touch.FrameReported += new TouchFrameEventHandler(Touch_FrameReported);
             planeSelectSliderRight.Value = 3;
             
+            // currentPlane = new CyclicIterator<Plane>(planes); // No, not until we need it.
+
             places = new MirroredCubeView<CellPlacer>(
                 new CellPlacer[,,] {
                     { {new CellPlacer(cell_0_0_0_tran, cell_0_0_0_proj), new CellPlacer(cell_0_0_1_tran, cell_0_0_1_proj), new CellPlacer(cell_0_0_2_tran, cell_0_0_2_proj)}, 
@@ -142,7 +150,7 @@ namespace Cuboku
                       {new TranslationAnimation(anim_2_2_0_X, anim_2_2_0_Y, anim_2_2_0_Z), new TranslationAnimation(anim_2_2_1_X, anim_2_2_1_Y, anim_2_2_1_Z), new TranslationAnimation(anim_2_2_2_X, anim_2_2_2_Y, anim_2_2_2_Z)} }
                 });
 
-            colors = new MirroredCubeView<SolidColorBrush>(
+            bgColors = new MirroredCubeView<SolidColorBrush>(
                 new SolidColorBrush[,,] {
                     { {cell_0_0_0.Background as SolidColorBrush, cell_0_0_1.Background as SolidColorBrush, cell_0_0_2.Background as SolidColorBrush},
                       {cell_0_1_0.Background as SolidColorBrush, cell_0_1_1.Background as SolidColorBrush, cell_0_1_2.Background as SolidColorBrush},
@@ -153,6 +161,19 @@ namespace Cuboku
                     { {cell_2_0_0.Background as SolidColorBrush, cell_2_0_1.Background as SolidColorBrush, cell_2_0_2.Background as SolidColorBrush},
                       {cell_2_1_0.Background as SolidColorBrush, cell_2_1_1.Background as SolidColorBrush, cell_2_1_2.Background as SolidColorBrush},
                       {cell_2_2_0.Background as SolidColorBrush, cell_2_2_1.Background as SolidColorBrush, cell_2_2_2.Background as SolidColorBrush} }
+                });
+
+            numbers = new MirroredCubeView<TextBlock>(
+                new TextBlock[,,] {
+                    { {cell_0_0_0.Child as TextBlock, cell_0_0_1.Child as TextBlock, cell_0_0_2.Child as TextBlock},
+                      {cell_0_1_0.Child as TextBlock, cell_0_1_1.Child as TextBlock, cell_0_1_2.Child as TextBlock},
+                      {cell_0_2_0.Child as TextBlock, cell_0_2_1.Child as TextBlock, cell_0_2_2.Child as TextBlock} },
+                    { {cell_1_0_0.Child as TextBlock, cell_1_0_1.Child as TextBlock, cell_1_0_2.Child as TextBlock},
+                      {cell_1_1_0.Child as TextBlock, cell_1_1_1.Child as TextBlock, cell_1_1_2.Child as TextBlock},
+                      {cell_1_2_0.Child as TextBlock, cell_1_2_1.Child as TextBlock, cell_1_2_2.Child as TextBlock} },
+                    { {cell_2_0_0.Child as TextBlock, cell_2_0_1.Child as TextBlock, cell_2_0_2.Child as TextBlock},
+                      {cell_2_1_0.Child as TextBlock, cell_2_1_1.Child as TextBlock, cell_2_1_2.Child as TextBlock},
+                      {cell_2_2_0.Child as TextBlock, cell_2_2_1.Child as TextBlock, cell_2_2_2.Child as TextBlock} }
                 });
 
             cells = new MirroredCubeView<Border>(
@@ -259,29 +280,32 @@ namespace Cuboku
             }
 
             cell_Tap(cell, null);
-
-            if (isGlowing)
-                return;
-            // Otherwise...
-
-            isGlowing = !isGlowing;
-            SliderInOut.Begin();
-
             int x = (int)cell.Resources["HomeX"];
             int y = (int)cell.Resources["HomeY"];
             int z = (int)cell.Resources["HomeZ"];
 
-            // Mappers.forEachThat(places, Mappers.inYZDiag, (CellPlacer place) => { place.z += 200; });
-            // Mappers.forEachThat(colors, Mappers.inYZDiag, (SolidColorBrush brush) => { brush.Color = Colors.Cyan; });
+            //if (isGlowing)
+            //    return;
 
-            Mappers.forEachThat(cells.original, Mappers.inYZDiag,
+            #region Glowing
+            isGlowing = !isGlowing;
+            SliderInOut.Begin();
+
+            if (currentPlane == null)
+                currentPlane = new CyclicIterator<Plane>(planes);
+            Plane plane = currentPlane.value;
+
+            Mappers.forEachThat(cells.original, plane.predicate,
                                 (Border c) => { 
-                                                c.Background = new SolidColorBrush(Colors.Cyan);
-                                                (c.Child as TextBlock).Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 47, 79, 79)); 
+                                    c.Opacity = 1.0;
+                                    c.Background = new SolidColorBrush(Colors.Cyan);
+                                    (c.Child as TextBlock).Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 47, 79, 79)); 
                                 });
             Mappers.forEachThat(cells.original, 
-                                (i, j, k) => !Mappers.inYZDiag(i, j, k), 
+                                (i, j, k) => !plane.predicate(i, j, k), 
                                 (Border c) => { c.Opacity = 0.6; });
+            ++currentPlane;
+            #endregion
         }
 
         private void storyBoard_Completed(object sender, EventArgs e)
@@ -362,12 +386,6 @@ namespace Cuboku
 
         bool presetCell(Border cell)
         {
-            // TODO: Use cell.Resources[Home*] instead of colors
-            //Color cellColor = ((cell.Child as TextBlock).Foreground as SolidColorBrush).Color;
-            //Color userSuppliedColor = Color.FromArgb(0xFF, 0x70, 0x80, 0x90);
-            //bool isPreset = ! Color.Equals(cellColor, userSuppliedColor);
-            //Debug.WriteLine("isPreset={0} cell color={1} user supplied color={2}", isPreset, cellColor, userSuppliedColor);
-            //return isPreset;
             bool ret = cell.Resources["isPreset"].ToString() == "True";
             Debug.WriteLine("Is this cell preset? {0}", ret);
             return ret;
@@ -540,21 +558,6 @@ namespace Cuboku
                             // If the user is pinching the cube, separate the outer
                             // (top, bottom, left, right) planes from the center,
                             // or bring them closer.
-                            //double scaleX = e.DeltaManipulation.Scale.X;
-                            //double scaleY = e.DeltaManipulation.Scale.Y;
-                            //if (i == 0) {
-                            //    point.x /= scaleX; // point.x = orig.x / scaleX;
-                            //}
-                            //else if (i == 2) {
-                            //    point.x *= scaleX; // point.x = orig.x * scaleX;
-                            //}
-
-                            //if (j == 0) {
-                            //    point.y *= scaleY; // point.y = orig.y * scaleY;
-                            //}
-                            //else if (j == 2) {
-                            //    point.y /= scaleY; // point.y = orig.y / scaleY;
-                            //}
 
                             double yDiff = Math.Abs(e.PinchManipulation.Current.PrimaryContact.Y  - e.PinchManipulation.Current.SecondaryContact.Y) -
                                            Math.Abs(e.PinchManipulation.Original.PrimaryContact.Y - e.PinchManipulation.Original.SecondaryContact.Y);
@@ -660,16 +663,26 @@ namespace Cuboku
             Debug.WriteLine("Page orientation just changed.");
         }
 
-        bool inCube(System.Windows.Input.GestureEventArgs tap)
+        bool inUIElement(System.Windows.Input.GestureEventArgs tap, UIElement elem)
         {
-            Point p = tap.GetPosition(TheCube);
-            Size s = TheCube.RenderSize;
+            Point p = tap.GetPosition(elem);
+            Size s = elem.RenderSize;
 
-            Debug.WriteLine("Tap at {0} relative to cube. Width={1} Height={2}",
+            Debug.WriteLine("Tap at {0} relative to object. Width={1} Height={2}",
                             p, s.Width, s.Height);
             
             return p.X > 0 && p.X < s.Width &&
                    p.Y > 0 && p.Y < s.Height;
+        }
+
+        bool inCube(System.Windows.Input.GestureEventArgs tap)
+        {
+            return inUIElement(tap, TheCube);
+        }
+
+        bool inPicker(System.Windows.Input.GestureEventArgs tap)
+        {
+            return inUIElement(tap, numPicker);
         }
 
         private void PhoneApplicationPage_Tap(object sender, System.Windows.Input.GestureEventArgs e)
@@ -688,6 +701,10 @@ namespace Cuboku
                     if (pickerShowing)
                         PickerInOut.Begin();
                     unselectCell();
+                }
+                else if (pickerShowing && inPicker(e))
+                {
+                    Debug.WriteLine("I'm gonna kill you! OOGA BOOGA BOOGA BOOGA!");
                 }
 
                 if (sliderShowing)
@@ -721,6 +738,7 @@ namespace Cuboku
                 if (selected != null)
                 {
                     (selected.Child as TextBlock).Text = (numPicker.SelectedIndex + 1).ToString();
+                    VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(0.125));
                 }
             }
             else

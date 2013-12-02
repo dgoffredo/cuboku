@@ -114,12 +114,13 @@ namespace Cuboku
             };
         }
         public static bool inYZDiag(int i, int j, int k) {
-                Debug.WriteLine("inYZDiag? ({0}, {1}, {2}) => {3}",
-                                i, j, k, j == k);
-                return j == k;
+            return j == k;
         }
         public static bool inXZDiag(int i, int j, int k) {
-                return i == k;
+            return i == k;
+        }
+        public static bool inXYDiag(int i, int j, int z) { // Won't be used.
+            return i == j;
         }
     }
 }
