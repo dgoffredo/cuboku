@@ -1071,7 +1071,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_0_0_1" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
@@ -1090,7 +1090,8 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="6" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="6"
+                                   />
                     </Border>
 
                     <Border p:Name="cell_0_0_2" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
@@ -1128,7 +1129,8 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" 
+                                   />
                     </Border>
 
                     <Border p:Name="cell_0_1_1" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
@@ -1185,7 +1187,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_0_2_1" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
@@ -1204,7 +1206,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_0_2_2" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
@@ -1223,7 +1225,8 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" 
+                                   />
                     </Border>
 
                     <Border p:Name="cell_1_0_0" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
@@ -1280,7 +1283,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_1_0" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
@@ -1299,7 +1302,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_1_1" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
@@ -1318,7 +1321,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_1_2" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
@@ -1356,7 +1359,8 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5"
+                                   />
                     </Border>
 
                     <Border p:Name="cell_1_2_1" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
@@ -1375,7 +1379,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_2_2" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
@@ -1394,7 +1398,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_0_0" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
@@ -1413,7 +1417,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_0_1" Hold="cell_Hold" Background="#88A500F5" HorizontalAlignment="Left" 
@@ -1489,7 +1493,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_1_2" Hold="cell_Hold" Background="#8811A5F5" HorizontalAlignment="Left" 
@@ -1527,7 +1531,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_2_1" Hold="cell_Hold" Background="#8811FF99" HorizontalAlignment="Left" 
@@ -1565,7 +1569,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Black" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
                     </Border>
 
 
@@ -2083,79 +2087,92 @@
                     </Rectangle>
 
                 </Grid>
-                <Slider Height="477"
-                	Minimum="0" Maximum="5" Orientation="Vertical" SmallChange="1" 
-                	VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                	ValueChanged="slider_valueChanged" p:Name="planeSelectSliderRight" 
-                    Margin="0,0,20,0" Visibility="Visible">
-                    <Slider.RenderTransform>
-                        <!-- Off screen by default. Animates in -->
-                        <TranslateTransform p:Name="planeSelectSliderRight_tran" 
-                                            X="{StaticResource rightSliderInitialXOffset}" 
-                                            Y="0" />
-                    </Slider.RenderTransform>
-                </Slider>
+                <Grid>
+                    <Rectangle Height="477" Width="50"
+                	    VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                        p:Name="rightSliderRegion" 
+                        Margin="0,0,20,0" Visibility="Visible" />
+                    <Slider Height="477"
+                	    Minimum="0" Maximum="5" Orientation="Vertical" SmallChange="1" 
+                	    VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                	    ValueChanged="slider_valueChanged" p:Name="planeSelectSliderRight" 
+                        Margin="0,0,20,0" Visibility="Visible">
+                        <Slider.RenderTransform>
+                            <!-- Off screen by default. Animates in -->
+                            <TranslateTransform p:Name="planeSelectSliderRight_tran" 
+                                                X="{StaticResource rightSliderInitialXOffset}" 
+                                                Y="0" />
+                        </Slider.RenderTransform>
+                    </Slider>
+                </Grid>
                 <!--<Image Source="/Assets/AlignmentGrid.png" VerticalAlignment="Top" Height="800" Width="480" Margin="0,-32,0,0" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" />-->
             </StackPanel>
+            <Grid Grid.Row="1">
+                <Rectangle x:Name="numPickerRegion" 
+                           VerticalAlignment="Bottom"
+                           Visibility="Visible" 
+                           Height="121"
+                           Margin="-10,0,0,0"></Rectangle>
+            
+                <phone:Pivot x:Name="numPicker"
+                         VerticalAlignment="Bottom" CharacterSpacing="0" FontSize="12"
+                         SelectionChanged="numPickerChanged" VerticalContentAlignment="Center"
+                         Visibility="Visible" Height="121" Loaded="numPicker_Loaded"
+                         Margin="-10,0,0,0">
+                    <phone:Pivot.RenderTransform>
+                        <TranslateTransform p:Name="numPicker_tran" 
+                                            Y="{StaticResource numPickerInitialYOffset}" 
+                                            X="0" />
+                    </phone:Pivot.RenderTransform>
 
-            <phone:Pivot x:Name="numPicker"
-                     VerticalAlignment="Bottom" CharacterSpacing="0" FontSize="12"
-                     SelectionChanged="numPickerChanged" VerticalContentAlignment="Center"
-                     Visibility="Visible" Grid.Row="1" Height="121" Loaded="numPicker_Loaded"
-                     Margin="-10,0,0,0">
-                <phone:Pivot.RenderTransform>
-                    <TranslateTransform p:Name="numPicker_tran" 
-                                        Y="{StaticResource numPickerInitialYOffset}" 
-                                        X="0" />
-                </phone:Pivot.RenderTransform>
-
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">1</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">2</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">3</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">4</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">5</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">6</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">7</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">8</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-                <phone:PivotItem CacheMode="{p:Null}">
-                    <phone:PivotItem.Header>
-                        <TextBlock FontSize="62">9</TextBlock>
-                    </phone:PivotItem.Header>
-                </phone:PivotItem>
-            </phone:Pivot>
-
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">1</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">2</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">3</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">4</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">5</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">6</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">7</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">8</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="62">9</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+                </phone:Pivot>
+            </Grid>
+            
         </Grid>
     </Canvas>
 

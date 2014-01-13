@@ -94,17 +94,21 @@ namespace Cuboku
         MirroredCubeView<CellPlacer> places;
         MirroredCubeView<TranslationAnimation> animations;
         MirroredCubeView<SolidColorBrush> bgColors;
-        MirroredCubeView<TextBlock> numbers;
+        // MirroredCubeView<TextBlock> numbers;
         MirroredCubeView<Border> cells;
+        MirroredCubeView<Ref<bool>> isPreset;
+        MirroredCubeView<Ref<bool>> isWrong;
 
         RotatableCovariant[] rotationSubscribers;
 
         Plane[] planes = Planes.makePlanes();
         CyclicIterator<Plane> currentPlane = null;
+        bool isGlowing = false;
 
         bool sliderShowing = false;
         bool pickerShowing = false;
-        bool isGlowing = false;
+        enum Gesture { None, Unknown, DragCube, PinchCube, Tap, SwipeEdge, SwipeNumPicker };
+        Gesture currentGesture = Gesture.None;
 
         enum Direction { Left, Right, Up, Down };
 
@@ -163,18 +167,18 @@ namespace Cuboku
                       {cell_2_2_0.Background as SolidColorBrush, cell_2_2_1.Background as SolidColorBrush, cell_2_2_2.Background as SolidColorBrush} }
                 });
 
-            numbers = new MirroredCubeView<TextBlock>(
-                new TextBlock[,,] {
-                    { {cell_0_0_0.Child as TextBlock, cell_0_0_1.Child as TextBlock, cell_0_0_2.Child as TextBlock},
-                      {cell_0_1_0.Child as TextBlock, cell_0_1_1.Child as TextBlock, cell_0_1_2.Child as TextBlock},
-                      {cell_0_2_0.Child as TextBlock, cell_0_2_1.Child as TextBlock, cell_0_2_2.Child as TextBlock} },
-                    { {cell_1_0_0.Child as TextBlock, cell_1_0_1.Child as TextBlock, cell_1_0_2.Child as TextBlock},
-                      {cell_1_1_0.Child as TextBlock, cell_1_1_1.Child as TextBlock, cell_1_1_2.Child as TextBlock},
-                      {cell_1_2_0.Child as TextBlock, cell_1_2_1.Child as TextBlock, cell_1_2_2.Child as TextBlock} },
-                    { {cell_2_0_0.Child as TextBlock, cell_2_0_1.Child as TextBlock, cell_2_0_2.Child as TextBlock},
-                      {cell_2_1_0.Child as TextBlock, cell_2_1_1.Child as TextBlock, cell_2_1_2.Child as TextBlock},
-                      {cell_2_2_0.Child as TextBlock, cell_2_2_1.Child as TextBlock, cell_2_2_2.Child as TextBlock} }
-                });
+            //numbers = new MirroredCubeView<TextBlock>(
+            //    new TextBlock[,,] {
+            //        { {cell_0_0_0.Child as TextBlock, cell_0_0_1.Child as TextBlock, cell_0_0_2.Child as TextBlock},
+            //          {cell_0_1_0.Child as TextBlock, cell_0_1_1.Child as TextBlock, cell_0_1_2.Child as TextBlock},
+            //          {cell_0_2_0.Child as TextBlock, cell_0_2_1.Child as TextBlock, cell_0_2_2.Child as TextBlock} },
+            //        { {cell_1_0_0.Child as TextBlock, cell_1_0_1.Child as TextBlock, cell_1_0_2.Child as TextBlock},
+            //          {cell_1_1_0.Child as TextBlock, cell_1_1_1.Child as TextBlock, cell_1_1_2.Child as TextBlock},
+            //          {cell_1_2_0.Child as TextBlock, cell_1_2_1.Child as TextBlock, cell_1_2_2.Child as TextBlock} },
+            //        { {cell_2_0_0.Child as TextBlock, cell_2_0_1.Child as TextBlock, cell_2_0_2.Child as TextBlock},
+            //          {cell_2_1_0.Child as TextBlock, cell_2_1_1.Child as TextBlock, cell_2_1_2.Child as TextBlock},
+            //          {cell_2_2_0.Child as TextBlock, cell_2_2_1.Child as TextBlock, cell_2_2_2.Child as TextBlock} }
+            //    });
 
             cells = new MirroredCubeView<Border>(
                 new Border[,,] {
@@ -187,6 +191,35 @@ namespace Cuboku
                     { {cell_2_0_0, cell_2_0_1, cell_2_0_2},
                       {cell_2_1_0, cell_2_1_1, cell_2_1_2},
                       {cell_2_2_0, cell_2_2_1, cell_2_2_2} }
+                });
+
+            isPreset = new MirroredCubeView<Ref<bool>>(
+                new Ref<bool>[,,]{
+                    { {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
+                      {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
+                      {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()} },                   
+                    { {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
+                      {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
+                      {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()} },
+                    { {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
+                      {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
+                      {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()} }
+                });
+
+            Mappers.forEach(isPreset, cells, 
+                            (Ref<bool> whether, Border cell) => { whether.value = presetCell(cell); });
+
+            isWrong = new MirroredCubeView<Ref<bool>>(
+                new Ref<bool>[,,]{
+                    { {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
+                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
+                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)} },                   
+                    { {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
+                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
+                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)} },
+                    { {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
+                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
+                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)} }
                 });
 
             coordinates = new MirroredCubeView<Translation<double>>();
@@ -248,7 +281,6 @@ namespace Cuboku
 
         Border selected = null;
         bool justSelected = false;
-        bool dragging = false;
         bool stoppingDueToGesture = false;
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -265,6 +297,7 @@ namespace Cuboku
 
         private void cell_Hold(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Hold me!");
             Border cell;
 
             if (e.OriginalSource.GetType() == typeof(Border))
@@ -287,25 +320,99 @@ namespace Cuboku
             //if (isGlowing)
             //    return;
 
-            #region Glowing
-            isGlowing = !isGlowing;
             SliderInOut.Begin();
+            // highlightNextPlane();
+        }
+
+        private SolidColorBrush makeFgColor(Border cell, int? xIn = null, int? yIn = null, int? zIn = null)
+        {
+            int x = xIn ?? (int)cell.Resources["HomeX"];
+            int y = yIn ?? (int)cell.Resources["HomeY"];
+            int z = zIn ?? (int)cell.Resources["HomeZ"];
+
+            if (isPreset[x, y, z].value)
+            {   // white
+                return new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF));
+            }
+            else if (isWrong[x, y, z].value)
+            {   // red
+                return new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0, 0));
+            }
+            else // non-preset cell that isn't wrong
+            {   // green
+                return new SolidColorBrush(Color.FromArgb(0xFF, 38, 0xFF, 0));
+            }
+        }
+
+        private void unhighlight(Mappers.PointPredicate points, bool darken)
+        {
+            Mappers.forEachThat(cells.original,
+                    points,
+                    (Border c) => {
+                        int x = (int)c.Resources["HomeX"];
+                        int y = (int)c.Resources["HomeY"];
+                        int z = (int)c.Resources["HomeZ"];
+                        c.Background = bgColors[x, y, z];
+                        c.Opacity = darken ? 0.6 : 1.0;
+                        (c.Child as TextBlock).Foreground = makeFgColor(c, x, y, z);
+                    });
+        }
+
+        private void unhighlight()
+        {
+            if (!isGlowing)
+                return;
+
+            Mappers.PointPredicate highlightedNow = currentPlane.value.predicate;
+            Mappers.PointPredicate theRest = (i,j,k) => !highlightedNow(i,j,k);
+
+            unhighlight(highlightedNow, false);
+
+            // And brighten up the unhighlighted ones.
+            Mappers.forEachThat(cells.original, theRest,
+                                (Border c) => c.Opacity = 1.0);
+
+            isGlowing = false;
+        }
+
+        private void highlightNextPlane(bool backwards = false)
+        {
+            Mappers.PointPredicate oldPred;
+            Mappers.PointPredicate newPred;
 
             if (currentPlane == null)
+            {
                 currentPlane = new CyclicIterator<Plane>(planes);
-            Plane plane = currentPlane.value;
+                newPred = currentPlane.value.predicate;
+                oldPred = (i,j,k) => !newPred(i,j,k);
+            }
+            else
+            {
+                oldPred = currentPlane.value.predicate;
+                if (backwards)
+                    --currentPlane;
+                else
+                    ++currentPlane;
+                newPred = currentPlane.value.predicate;
 
-            Mappers.forEachThat(cells.original, plane.predicate,
+                if (!isGlowing) // darken the rest if we weren't glowing
+                    oldPred = (i,j,k) => !newPred(i,j,k);
+            }
+
+            // Unhighlight old ones.
+            unhighlight( (i ,j, k) => oldPred(i, j, k) && !newPred(i, j, k), 
+                        true);
+
+            // Highlight new ones.
+            Mappers.forEachThat(cells.original,
+                                (i, j, k) => newPred(i, j, k) && !oldPred(i, j, k),
                                 (Border c) => { 
                                     c.Opacity = 1.0;
                                     c.Background = new SolidColorBrush(Colors.Cyan);
-                                    (c.Child as TextBlock).Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 47, 79, 79)); 
+                                    (c.Child as TextBlock).Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 47, 79, 79));
                                 });
-            Mappers.forEachThat(cells.original, 
-                                (i, j, k) => !plane.predicate(i, j, k), 
-                                (Border c) => { c.Opacity = 0.6; });
-            ++currentPlane;
-            #endregion
+
+            isGlowing = true;
         }
 
         private void storyBoard_Completed(object sender, EventArgs e)
@@ -503,25 +610,49 @@ namespace Cuboku
             Debug.WriteLine("The bouncy cell animation just completed.");
         }
 
+        private bool isInRightSliderRegion(Object originalSource, Point manipOrigin)
+        {
+            UIElement source = originalSource as UIElement;
+            var tran = source.TransformToVisual(this);
+            Point actualOrigin = tran.Transform(manipOrigin);
+
+            return inUIElement(actualOrigin, rightSliderRegion);
+        }
+
         private void PhoneApplicationPage_ManipulationStarted(object sender, System.Windows.Input.ManipulationStartedEventArgs e)
         {
             Debug.WriteLine("Begin gesture.");
+            currentGesture = Gesture.Unknown;
+
+            //UIElement source = e.OriginalSource as UIElement;
+            //var tran = source.TransformToVisual(this);
+            //Point manipOrigin = tran.Transform(e.ManipulationOrigin);
+
+            //if (inUIElement(manipOrigin, rightSliderRegion))
+            if (isInRightSliderRegion(e.OriginalSource, e.ManipulationOrigin))
+            {
+                Debug.WriteLine("We're in slider territory.");
+                currentGesture = Gesture.SwipeEdge;
+            }
+
             background_anim.Pause();
         }
 
-        DateTime lastDelta;
         private void PhoneApplicationPage_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
         {
-            DateTime now = DateTime.Now;
-            
-            Debug.WriteLine("PinchManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.PinchManipulation));
-            Debug.WriteLine("DeltaManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation));
+            //Debug.WriteLine("PinchManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.PinchManipulation));
+            //Debug.WriteLine("DeltaManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation));
 
-            if (lastDelta == null)
-                lastDelta = now;
-
-            double secs = (now - lastDelta).TotalSeconds;
-            lastDelta = now; // for next time
+            if (currentGesture == Gesture.SwipeEdge)
+            {
+                if (isInRightSliderRegion(e.OriginalSource, e.ManipulationOrigin))
+                {
+                    Debug.WriteLine("We're still in slider territory.");
+                    return;
+                }
+                else
+                    currentGesture = Gesture.Unknown;
+            }
 
             if (Twistidoo.GetCurrentState() != ClockState.Stopped)
             {
@@ -530,7 +661,6 @@ namespace Cuboku
                 stopRotation();
             }
 
-            dragging = true;
             double scale = 0.25;
             const int len = 3;
             foreach (int i in Enumerable.Range(0, len))
@@ -542,6 +672,8 @@ namespace Cuboku
 
                         if (e.PinchManipulation == null)
                         {
+                            currentGesture = Gesture.DragCube;
+
                             // If the user is dragging the cube around, move the front
                             // and back planes in opposite directions.
                             switch (k) {
@@ -555,6 +687,8 @@ namespace Cuboku
                         }
                         else
                         {
+                            currentGesture = Gesture.PinchCube;
+
                             // If the user is pinching the cube, separate the outer
                             // (top, bottom, left, right) planes from the center,
                             // or bring them closer.
@@ -594,7 +728,7 @@ namespace Cuboku
 
             if (e.FinalVelocities == null)
             {
-                if (dragging == true)
+                if (currentGesture == Gesture.DragCube || currentGesture == Gesture.PinchCube)
                 {
                     Debug.WriteLine("Returning to center");
                     startReturn();
@@ -607,10 +741,20 @@ namespace Cuboku
                                                e.FinalVelocities.ExpansionVelocity, e.FinalVelocities.LinearVelocity);  
             
             double speed = hypot(e.FinalVelocities.LinearVelocity.X, e.FinalVelocities.LinearVelocity.Y);
+
+            if (currentGesture == Gesture.SwipeEdge)
+            {
+                Debug.WriteLine("Congrats. You swiped the side with speed={0}", speed);
+                if (speed > 100)
+                    highlightNextPlane(e.FinalVelocities.LinearVelocity.Y > 0);
+
+                return;
+            }
+
             if (speed < /*300*/ 400) // TODO: come up for a more solid policy on speed.
             {
                 Debug.WriteLine("That gesture was too slow. Not going to rotate.");
-                if (dragging == true)
+                if (currentGesture == Gesture.DragCube || currentGesture == Gesture.PinchCube)
                 {
                     Debug.WriteLine("Returning to center");
                     startReturn();
@@ -655,12 +799,25 @@ namespace Cuboku
                 }
             }
 
-            dragging = false; // The manipulation just finished, so the user is not dragging now.
+            currentGesture = Gesture.None;
         }
 
         private void PhoneApplicationPage_OrientationChanged(object sender, OrientationChangedEventArgs e)
         {
             Debug.WriteLine("Page orientation just changed.");
+        }
+
+        bool inUIElement(Point p, UIElement elem)
+        {
+            var tran = elem.TransformToVisual(this);
+            Point elemPos = tran.Transform(new Point(0, 0));
+            Size s = elem.RenderSize;
+
+            Debug.WriteLine("p = {0} while the element's origin is {1} and has size {2}",
+                            p, elemPos, s);
+
+            return p.X > elemPos.X && p.X < elemPos.X + s.Width &&
+                   p.Y > elemPos.Y && p.Y < elemPos.Y + s.Height;
         }
 
         bool inUIElement(System.Windows.Input.GestureEventArgs tap, UIElement elem)
@@ -700,11 +857,33 @@ namespace Cuboku
                 {
                     if (pickerShowing)
                         PickerInOut.Begin();
+                    unhighlight();
+                    unselectCell();
+                }
+                else if (inUIElement(e, rightSliderRegion))
+                {
+                    unhighlight();
                     unselectCell();
                 }
                 else if (pickerShowing && inPicker(e))
                 {
                     Debug.WriteLine("I'm gonna kill you! OOGA BOOGA BOOGA BOOGA!");
+                    double x = e.GetPosition(numPicker).X;
+                    int currentIndex = numPicker.SelectedIndex;
+                    double placeCloseTo = 9.0 * x / numPicker.RenderSize.Width + 0.5;
+                    Debug.WriteLine("relative x={0}, ratio of width={1}, out of nine={2}, selected index={3}",
+                                    x, 
+                                    x / numPicker.RenderSize.Width,
+                                    placeCloseTo,
+                                    currentIndex);
+
+                    numPicker.SelectedIndex = (int)Math.Round(placeCloseTo) - 1;
+                }
+                else if(!pickerShowing && inUIElement(e, numPickerRegion))
+                {
+                    Debug.WriteLine("You can't see the picker, but you can feel it.");
+                    unhighlight();
+                    unselectCell();
                 }
 
                 if (sliderShowing)
@@ -738,7 +917,7 @@ namespace Cuboku
                 if (selected != null)
                 {
                     (selected.Child as TextBlock).Text = (numPicker.SelectedIndex + 1).ToString();
-                    VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(0.125));
+                    // VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(0.125));
                 }
             }
             else

@@ -14,6 +14,8 @@ namespace Cuboku
             Translation<int>[] _points = new Translation<int>[size*size];
             Mappers.PointPredicate _predicate;
 
+            // Will throw a bounds exception if the number of points
+            // for which pred -> true is greater than size*size.
             public Plane(Mappers.PointPredicate pred)
             {
                 _predicate = pred;
@@ -49,7 +51,7 @@ namespace Cuboku
 
         static public Plane[] makePlanes() {
             return new Plane[] { xEquals0, xEquals1, xEquals2, yEquals0, yEquals1, yEquals2,
-                                 zEquals0, zEquals1, zEquals2, xEqualsY, xEqualsZ, yEqualsZ }; 
+                                 zEquals0, zEquals1, zEquals2, /*xEqualsY,*/ xEqualsZ, yEqualsZ }; 
         }
     }
 }
