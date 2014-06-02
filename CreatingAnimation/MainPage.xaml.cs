@@ -18,6 +18,10 @@ using TranslationAnimation = Cuboku.Translation<System.Windows.Media.Animation.D
 using XYZ = Cuboku.Translation<int>;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using Plane = Cuboku.Planes.Plane;
+using HttpClient = System.Net.Http.HttpClient;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Runtime.Serialization.Json;
 
 namespace Cuboku
 {
@@ -127,10 +131,15 @@ namespace Cuboku
         MirroredCubeView<HashSet<XYZ>> wrongers;
 
         RotatableCovariant[] rotationSubscribers;
+        HashSet<int> fullSet = new HashSet<int>(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
 
         Plane[] planes = Planes.makePlanes();
         CyclicIterator<Plane> currentPlane = null;
         bool isGlowing = false;
+
+        int secondsElapsed = 0;
+
+        int difficulty = 15;
 
         TranslationComparer<int> comparePoints = new TranslationComparer<int>();
 
@@ -143,21 +152,22 @@ namespace Cuboku
 
         enum Direction { Left, Right, Up, Down };
 
+        Stack<CellChange> past = new Stack<CellChange>();
+        Stack<CellChange> future = new Stack<CellChange>();
+
+        private void iAmZombie(Object whoSentYou, ActivatedEventArgs args)
+        {
+            Debug.WriteLine("Aaaaaaaand we're back.");
+        }
+
         public MainPage()
         {
-            try
-            {
-                InitializeComponent();
-            }
-            catch (System.Windows.Markup.XamlParseException e)
-            {
-                Debug.WriteLine("Here: {0}", e);
-            }
 
-            // Touch.FrameReported += new TouchFrameEventHandler(Touch_FrameReported);
+            InitializeComponent();
+
             planeSelectSliderRight.Value = 3;
-            
-            // currentPlane = new CyclicIterator<Plane>(planes); // No, not until we need it.
+
+            PhoneApplicationService.Current.Activated += new EventHandler<ActivatedEventArgs>(iAmZombie);
 
             places = new MirroredCubeView<CellPlacer>(
                 new CellPlacer[,,] {
@@ -225,7 +235,7 @@ namespace Cuboku
                 });
 
             Mappers.forEach(isPreset, cells, 
-                            (Ref<bool> whether, Border cell) => { whether.value = presetCell(cell); });
+                            (Ref<bool> whether, Border cell) => { whether.value = originallyPresetCell(cell); });
 
             isWrong = new MirroredCubeView<Ref<bool>>(
                 new Ref<bool>[,,]{
@@ -271,6 +281,7 @@ namespace Cuboku
                       {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} }
                 });
 
+            // Note that things like numbers, colors, etc. are not rotated.
             rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, cells };
 
             foreach (int i in Enumerable.Range(0, 3))
@@ -280,9 +291,106 @@ namespace Cuboku
                         planesThrough[i,j,k] = from plane in planes
                                                where plane.predicate(i, j, k)
                                                select plane;
-                        foreach (var plane in planesThrough[i,j,k])
-                            Debug.WriteLine("({0}, {1}, {2}) is in {3}", i, j, k, plane.name);
                     }
+
+            resetCube(RandomPuzzle.create(difficulty)); // Remove this to play the static puzzle.
+            
+            // loadState();
+        }
+
+        private void writeGameState(System.IO.Stream stream)
+        {
+            GameState state = new GameState();
+            // state.numbers = numbers; // nope
+
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(GameState));
+            ser.WriteObject(stream, state);
+        }
+
+        private void loadState()
+        {
+            const string stateFilename = "game_state.json";
+            try {
+                IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
+
+                if (!savegameStorage.FileExists(stateFilename))
+                {
+                    using (IsolatedStorageFileStream fs = savegameStorage.CreateFile(stateFilename))
+                    {
+                        if (fs == null) {
+                            Debug.WriteLine("Bad things!");
+                            return;
+                        }
+
+                        // Write
+                        using (StreamWriter writer = new StreamWriter(fs))
+                        {
+                            writer.WriteLine("There's a first time for everything.");
+                        }
+                    }
+                }
+                else
+                {
+                    using (IsolatedStorageFileStream fs = savegameStorage.OpenFile(stateFilename, System.IO.FileMode.Append))
+                    {
+                        if (fs == null) {
+                            Debug.WriteLine("More bad things!");
+                            return;
+                        }
+
+                        // Write
+                        //using (StreamWriter writer = new StreamWriter(fs))
+                        //{
+                        //    writer.WriteLine("I am a shoe.");
+                        //}
+
+                        writeGameState(fs);
+                    }
+                }
+
+                using (IsolatedStorageFileStream fs = savegameStorage.OpenFile(stateFilename, System.IO.FileMode.Open))
+                {
+                    if (fs == null) {
+                        Debug.WriteLine("Why won't bad things stop happening?");
+                        return;
+                    }
+ 
+                    // Read
+                    using (StreamReader reader = new StreamReader(fs))
+                    {
+                        Debug.WriteLine("The length is {0}. It says {1}", fs.Length, reader.ReadToEnd());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Caught a nasty exception thingy when trying to loadState(): {0}", ex);
+            }
+        }
+
+        private void timeTravel(Stack<CellChange> goingTo, Stack<CellChange> leavingBehind)
+        {
+            if (Object.ReferenceEquals(goingTo, leavingBehind))
+                throw new Exception("We cannot go from now to now -- now simply is.");
+            else if (goingTo.Count == 0)
+                return;
+
+            CellChange newVal = goingTo.Pop();
+            XYZ p = newVal.position;
+
+            leavingBehind.Push(new CellChange(p, numbers[p.x, p.y, p.z].value)); // In case we return
+            
+            Border cell = cells.original[p.y, p.y, p.z];
+            setCellToNumber(cell, newVal.value, false);
+            // selectCell(cell);
+        }
+
+        private void goBack() {
+            timeTravel(past, future);
+        }
+
+        private void goForward() {
+            timeTravel(future, past);
         }
 
         private int parseIntOrZero(string s)
@@ -307,6 +415,15 @@ namespace Cuboku
                 null, milliseconds, System.Threading.Timeout.Infinite);
         }
 
+        void doEvery(Action what, int milliseconds)
+        {
+            System.Threading.Timer regularly = new System.Threading.Timer(
+                (dummy) => { 
+                    Dispatcher.BeginInvoke(what);
+                },
+                null, milliseconds, milliseconds);
+        }
+
         void startOpeningAnimation()
         {
             animationTime = 3.0;
@@ -321,7 +438,7 @@ namespace Cuboku
 
         static double dx = 124;
         static double dy = -143;
-        static double dz = -150; // -100;
+        static double dz = -150;
         static double dxz = 43;
         static double dyz = -43;
         static Matrix projection = new Matrix(new double[,]{
@@ -366,6 +483,7 @@ namespace Cuboku
         private void cell_Hold(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Hold me!");
+
             Border cell;
 
             if (e.OriginalSource.GetType() == typeof(Border))
@@ -381,15 +499,7 @@ namespace Cuboku
             }
 
             cell_Tap(cell, null);
-            //int x = (int)cell.Resources["HomeX"];
-            //int y = (int)cell.Resources["HomeY"];
-            //int z = (int)cell.Resources["HomeZ"];
-
-            //if (isGlowing)
-            //    return;
-
             SliderInOut.Begin();
-            // highlightNextPlane();
         }
 
         private XYZ getCellXYZ(Border cell)
@@ -418,16 +528,13 @@ namespace Cuboku
             int y = yIn ?? xyz.y;
             int z = zIn ?? xyz.z;
 
-            // Debug.WriteLine("Making a foreground color for ({0}, {1}, {2})", x, y, z);
-
             if (isPreset[x, y, z].value)
             {   // white
                 return new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF));
             }
             else if (wrongers[x, y, z].Count > 0)
-            {   // red
-                Debug.WriteLine("({0}, {1}, {2}) is red now", x, y, z);
-                return new SolidColorBrush(Color.FromArgb(0xFF, 0x88, 0, 0));
+            {   // urnge
+                return new SolidColorBrush(Color.FromArgb(0xFF, 255, 128, 0));
             }
             else // non-preset cell that isn't wrong
             {   // green
@@ -462,6 +569,49 @@ namespace Cuboku
                                 (Border c) => c.Opacity = 1.0);
 
             isGlowing = false;
+        }
+
+        private void resetCube(MirroredCubeView<Ref<int>> newNumbers = null)
+        {
+            if (newNumbers != null)
+            {
+                numbers = newNumbers;
+
+                // Update presets based on new numbers
+                Mappers.forEach(isPreset, numbers, 
+                    (Ref<bool> isIt, Ref<int> num) => {
+                        isIt.value = num.value != 0;
+                    });
+            }
+
+            // Unhighlight
+            unhighlight();
+
+            // Retract selector
+            if (pickerShowing)
+                PickerInOut.Begin(); 
+
+            // Retract slider
+            if (sliderShowing)
+                SliderInOut.Begin();
+
+            // Clear wrongers
+            Mappers.forEach(wrongers, (HashSet<XYZ> set) => set.Clear());
+
+            // Set cell colors
+            Mappers.forEach(cells.original, bgColors,
+                    (Border c, SolidColorBrush bgColor) => {
+                        c.Background = bgColor;
+
+                        XYZ p = getCellXYZ(c);
+                        (c.Child as TextBlock).Foreground = makeFgColor(c, p.x, p.y, p.z);
+                    });
+
+            // Set cell text according to numbers
+            Mappers.forEach(cells.original, numbers,
+                    (Border c, Ref<int> num) => {
+                        setCellNumber(c, num.value);
+                    });
         }
 
         private void highlightNextPlane(bool backwards = false)
@@ -580,11 +730,20 @@ namespace Cuboku
             selected = null;
         }
 
-        // TODO: when the numbers aren't hard-coded, this will be useless.
-        bool presetCell(Border cell)
+        // This is only for initializing isPreset from the
+        // first (hard-coded) level. If you want to check
+        // whether a cell is preset, use isPreset[x, y, z].value
+        // or presetCell(Border).
+        bool originallyPresetCell(Border cell)
         {
             bool ret = cell.Resources["isPreset"].ToString() == "True";
             return ret;
+        }
+
+        bool presetCell(Border cell)
+        {
+            XYZ p = getCellXYZ(cell);
+            return isPreset[p.x, p.y, p.z].value;
         }
 
         private Storyboard bounceCell(Border cell, EventHandler completedHandler)
@@ -639,66 +798,64 @@ namespace Cuboku
             return boing;
         }
 
-        private void cell_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        private void selectCell(Border cell)
         {
-            // Note: e is not used.
-
-            Border cell = sender as Border;
-            TextBlock block = cell.Child as TextBlock;
-            XYZ p = getCellXYZ(cell);
-
-            Debug.WriteLine("Tapped cell at ({0}, {1}, {2})", p.x, p.y, p.z); 
-
-            if (cell == selected)
+            unselectCell();
+            if (presetCell(cell))
             {
-                if (!presetCell(cell))
-                {
-                    if (block.Text.Length == 0)
-                    {
-                        block.Text = (numPicker.SelectedIndex + 1).ToString();
-                        numbers[p.x, p.y, p.z].value = numPicker.SelectedIndex + 1;
-                    }
-                    else
-                    {
-                        block.Text = "";
-                        numbers[p.x, p.y, p.z].value = 0;
-                    }
-
-                    if (!pickerShowing)
-                        PickerInOut.Begin();
-                }
-                else
-                {
-                    if (pickerShowing)
-                        PickerInOut.Begin();
-                }
+                selected = cell;
+                if (pickerShowing)
+                    PickerInOut.Begin();
             }
             else
             {
-                unselectCell();
-                if (presetCell(cell))
-                {
-                    selected = cell;
-                    if (pickerShowing)
-                        PickerInOut.Begin();
-                }
-                else
-                {
-                    selected = cell;
-                    string numberText = block.Text;
-                    if (numberText.Length != 0)
-                        numPicker.SelectedIndex = int.Parse(numberText) - 1;
-                    if (!pickerShowing)
-                        PickerInOut.Begin();
-                }
+                selected = cell;
+                string numberText = (cell.Child as TextBlock).Text;
+                if (numberText.Length != 0) // bring selector to that number
+                    numPicker.SelectedIndex = int.Parse(numberText) - 1;
+
+                if (!pickerShowing)
+                    PickerInOut.Begin();
             }
 
-            checkCorrectness(cell);
-            
+            wiggleSelection();
+
+            HashSet<XYZ> conflicts = checkCorrectness(cell);
+            bounceConflicts(conflicts);
+        }
+
+        private void toggleSelectedCell()
+        {
+            Border cell = selected;
+            string cellText = (cell.Child as TextBlock).Text;
+
+            if (!presetCell(cell))
+            {
+                if (cellText.Length == 0)
+                    setCellToNumber(cell, numPicker.SelectedIndex + 1);
+                else
+                    setCellToNumber(cell, 0);
+
+                if (!pickerShowing)
+                    PickerInOut.Begin();
+            }
+            else
+            {
+                if (pickerShowing)
+                    PickerInOut.Begin();
+            }
+
+            // checkCorrectness(cell);
+            wiggleSelection();
+        }
+
+        private void wiggleSelection()
+        {
+            Border cell = selected;
+
             Storyboard boing = bounceCell(cell, new EventHandler(boing_Completed));
             try
             {
-                // TODO: Check for any disagreements and make their borders thinly red
                 cell.BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 100, 149, 237));
                 cell.BorderThickness = new Thickness(3);
                 justSelected = true;
@@ -708,13 +865,27 @@ namespace Cuboku
             {
                 Debug.WriteLine("Exception: {0}", ex);
             }
+        }
+
+        private void cell_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            Border cell = sender as Border;
+
+            if (cell == selected)
+            {
+               toggleSelectedCell();
+            }
+            else
+            {
+                selectCell(cell);
+            }
 
             Debug.WriteLine("Tippy tap on {0}", cell.Name);
         }
 
         void boing_Completed(object sender, EventArgs e)
         {
-            Debug.WriteLine("The bouncy cell animation just completed.");
+            Debug.WriteLine("A bouncy cell animation just completed.");
         }
 
         private bool isInRightSliderRegion(Object originalSource, Point manipOrigin)
@@ -731,11 +902,6 @@ namespace Cuboku
             Debug.WriteLine("Begin gesture.");
             currentGesture = Gesture.Unknown;
 
-            //UIElement source = e.OriginalSource as UIElement;
-            //var tran = source.TransformToVisual(this);
-            //Point manipOrigin = tran.Transform(e.ManipulationOrigin);
-
-            //if (inUIElement(manipOrigin, rightSliderRegion))
             if (isInRightSliderRegion(e.OriginalSource, e.ManipulationOrigin))
             {
                 Debug.WriteLine("We're in slider territory.");
@@ -747,9 +913,6 @@ namespace Cuboku
 
         private void PhoneApplicationPage_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
         {
-            //Debug.WriteLine("PinchManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.PinchManipulation));
-            //Debug.WriteLine("DeltaManipulation    {0}", Newtonsoft.Json.JsonConvert.SerializeObject(e.DeltaManipulation));
-
             if (currentGesture == Gesture.SwipeEdge)
             {
                 if (isInRightSliderRegion(e.OriginalSource, e.ManipulationOrigin))
@@ -969,6 +1132,8 @@ namespace Cuboku
                 }
                 else if (inUIElement(e, rightSliderRegion))
                 {
+                    if (pickerShowing)
+                        PickerInOut.Begin();
                     unhighlight();
                     unselectCell();
                 }
@@ -984,7 +1149,15 @@ namespace Cuboku
                                     placeCloseTo,
                                     currentIndex);
 
-                    numPicker.SelectedIndex = (int)Math.Round(placeCloseTo) - 1;
+                    int closestIndex = (int)Math.Round(placeCloseTo) - 1;
+                    
+                    if (closestIndex == numPicker.SelectedIndex)
+                    {
+                        if (selected != null)
+                            setCellBasedOnNumPicker(selected);
+                    }
+                    else
+                        numPicker.SelectedIndex = closestIndex; // Will trigger changed handler
                 }
                 else if(!pickerShowing && inUIElement(e, numPickerRegion))
                 {
@@ -1000,22 +1173,44 @@ namespace Cuboku
 
         private void ApplicationBarIconButton_Click_0(object sender, EventArgs e)
         {
-            doRotation(Direction.Left);
+            // doRotation(Direction.Left);
+            goBack();
         }
         private void ApplicationBarIconButton_Click_1(object sender, EventArgs e)
         {
-            doRotation(Direction.Right);
+            // doRotation(Direction.Right);
+            goForward();
         }
         private void ApplicationBarIconButton_Click_2(object sender, EventArgs e)
         {
+            // stub
             doRotation(Direction.Up);
         }
         private void ApplicationBarIconButton_Click_3(object sender, EventArgs e)
         {
+            // stub
             doRotation(Direction.Down);
         }
 
-        private void checkCorrectness(Border cell)
+        private bool isWin()
+        {
+            foreach (var plane in planes)
+            {
+                HashSet<int> nums = new HashSet<int>(from p in plane.points
+                                                     where numbers[p.x, p.y, p.z] != null
+                                                     select numbers[p.x, p.y, p.z].value);
+                if (!nums.SetEquals(fullSet))
+                {
+                    Debug.WriteLine("Sorry, but that's not a win yet.", nums, fullSet);
+                    return false;
+                }
+            }
+            Debug.WriteLine("You win!");
+            return true;
+        }
+
+        // Returns the set of conflicting cells (by coordinates)
+        private HashSet<XYZ> checkCorrectness(Border cell)
         {
             XYZ p = getCellXYZ(cell);
             int num = numbers[p.x, p.y, p.z].value;
@@ -1045,60 +1240,109 @@ namespace Cuboku
                         if ( ! comparePoints.Equals(point, p)
                             && numbers[point.x, point.y, point.z].value == num)
                         {
-                            Debug.WriteLine("I found a dupe ({0}, {1}, {2}) in plane {3}", point.x, point.y, point.z, plane.name);
+                            // Debug.WriteLine("I found a dupe ({0}, {1}, {2}) in plane {3}", point.x, point.y, point.z, plane.name);
                             dupes.Add(point);
                         }
                     }
                 }
 
                 Debug.WriteLine("Found {0} distinct dupes.", dupes.Count);
-                //HashSet<XYZ> myWronger = wrongers[p.x, p.y, p.z];
-                //myWronger.Clear();
-                //myWronger.UnionWith(dupes);
                 wrongers[p.x, p.y, p.z] = dupes;
 
                 if (dupes.Count > 0) // Have to mark the dupes
                 {
                     foreach (var point in dupes)
                     {
-                        Debug.WriteLine("Found distinct dupe ({0}, {1}, {2})", point.x, point.y, point.z);
+                        // Debug.WriteLine("Found distinct dupe ({0}, {1}, {2})", point.x, point.y, point.z);
                         wrongers[point.x, point.y, point.z].Add(p);
                     }
-                    // Clear p from the others
-                    Mappers.forEachThat(wrongers,
-                        (i, j, k) => ! dupes.Contains(new XYZ(i, j, k)),
-                        (HashSet<XYZ> other) => other.Remove(p));
                 }
+                // Clear p from the others
+                Mappers.forEachThat(wrongers,
+                    (i, j, k) => ! dupes.Contains(new XYZ(i, j, k)),
+                    (HashSet<XYZ> other) => other.Remove(p));
             }
-            // Debug.WriteLine("Break! Examine this.wrongers at this point.");
+          
             Mappers.forEach(cells.original,
                             (Border c) => {
                                 (c.Child as TextBlock).Foreground = makeFgColor(c);
                             });
+
+            return dupes;
         }
   
+        private void setCellBasedOnNumPicker(Border cell)
+        {
+            setCellToNumber(cell, numPicker.SelectedIndex + 1);
+            // TODO: and save the change
+        }
+
+        private void bounceConflicts(HashSet<XYZ> conflicts)
+        {
+            HashSet<Border> conflictingCells = new HashSet<Border>(from xzy in conflicts
+                                                                   select cells.original[xzy.x, xzy.y, xzy.z]);
+
+            foreach (Border c in conflictingCells)
+            {
+                c.BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 255, 0, 0));
+                c.BorderThickness = new Thickness(2);
+                Storyboard boing = bounceCell(c, 
+                                                new EventHandler(  
+                                                    (Object dummy1, EventArgs dummy2) => {
+                                                        c.BorderThickness = new Thickness(0);
+                                                    }  
+                                                ));
+                boing.Begin();
+            }
+        }
+
+        private void setCellNumber(Border cell, int number)
+        {
+            TextBlock block = cell.Child as TextBlock;
+            block.Text = number != 0 ? number.ToString() : "";
+
+            XYZ p = getCellXYZ(cell); 
+            numbers[p.x, p.y, p.z].value = number;
+        }
+
+        private CellChange valueFromCell(Border cell)
+        {
+            XYZ p = getCellXYZ(cell);
+            return new CellChange(p, numbers[p.x, p.y, p.z].value);
+        }
+
+        private void setCellToNumber(Border cell, int newNum, bool recordInHistory = true)
+        {
+            setCellNumber(cell, newNum);
+
+            if (recordInHistory)
+            {
+                future.Clear();
+                past.Push(valueFromCell(cell));
+            }
+
+            HashSet<XYZ> conflicts = checkCorrectness(cell);
+            
+            if (isWin())
+            {
+                doAfter(() => {
+                    Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(300));
+                    MessageBox.Show("You win!", "Congrats", MessageBoxButton.OK);
+                    resetCube(RandomPuzzle.create(difficulty));
+                }, 500);
+            }
+            else
+                bounceConflicts(conflicts);
+        }
+
         bool numPickerChangedBefore = false;
         private void numPickerChanged(object sender, SelectionChangedEventArgs e)
         {
-            // TODO: keep track of when any cell number changes:
-            //  null --> number
-            //  number --> null
-            //  number --> different number
-            //
             if (numPickerChangedBefore)
             {
                 justSelected = true;
                 if (selected != null)
-                {
-                    int newNum = numPicker.SelectedIndex + 1;
-                    XYZ selectedXYZ = getCellXYZ(selected);
-                    numbers[selectedXYZ.x, selectedXYZ.y, selectedXYZ.z].value = newNum;
-
-                    checkCorrectness(selected); // checks numbers
-                    (selected.Child as TextBlock).Text = (newNum).ToString(); // set text to number
-
-                    // VibrationDevice.GetDefault().Vibrate(TimeSpan.FromSeconds(0.125));
-                }
+                    setCellBasedOnNumPicker(selected);
             }
             else
             {
@@ -1109,19 +1353,55 @@ namespace Cuboku
     
         private void slider_valueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            planeSelectSliderRight.Value = (int)e.NewValue;
+            if (cells == null)
+            {
+                Debug.WriteLine("WTF");
+                return;
+            }
+
+            var oldValue = (int)e.OldValue;
+            var newValue = (int)e.NewValue;
+            planeSelectSliderRight.Value = newValue;
+            if (newValue > oldValue)
+                highlightNextPlane();
+            else if (newValue < oldValue)
+                highlightNextPlane(true);
+            else
+                Debug.WriteLine(":D");
         }
 
         private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
         {
-            // background_pan.Begin();
+            //animationTime = 3.0;
+            //// Opening animation to show that cube can move
+            //doRotation(Direction.Up);
 
-            animationTime = 3.0;
-            doRotation(Direction.Up);
+            //// And back
+            //doAfter(() => {
+            //    doRotation(Direction.Down);
+            //}, 500);
 
-            doAfter(() => {
-                doRotation(Direction.Down);
-            }, 500);
+            // Clock
+            doEvery(() => { 
+                secondsElapsed += 1;
+                // if (secondsElapsed % 10 == 0)
+                //     Debug.WriteLine("It's been {0} seconds.", secondsElapsed); 
+            }, 1000);
+
+            // sendData();
+        }
+
+        private async void sendData()
+        {
+            var client = new HttpClient();
+            string data;
+            try {
+                data = await client.GetStringAsync("http://www.sudokudos.com");
+                Debug.WriteLine("Look what I got: {0}", data);
+            }
+            catch (System.Exception e) {
+                Debug.WriteLine("Caught exception: {0}", e);
+            }
         }
 
         private void numPicker_Loaded(object sender, RoutedEventArgs e)
@@ -1174,6 +1454,51 @@ namespace Cuboku
         {
             Rectangle rec = sender as Rectangle;
             cell_Tap(cellFromTapPad(rec), null);
+        }
+
+        private void LevelSelector_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            Debug.WriteLine("Tapped the level selector");
+            // background_anim.Pause();
+        }
+
+        private void LevelSelector_LostFocus(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Level selector lost focus");
+            // background_anim.Resume();
+        }
+
+        private void LevelSelector_ManipulationStarted(object sender, ManipulationStartedEventArgs e)
+        {
+            Debug.WriteLine("Level selector manip begin");
+            // background_anim.Pause();
+        }
+
+        private void LevelSelector_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        {
+            Debug.WriteLine("Level selector manip end");
+        }
+
+        private void LevelSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.WriteLine("Level changed: {0}", e);
+        }
+
+        private void LevelSelector_GotFocus(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Level selector got focus");
+        }
+
+        private void LevelSelector_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.PreviousSize.Height > e.NewSize.Height)
+                Debug.WriteLine("level picker is closing");
+            else if (e.PreviousSize.Height < e.NewSize.Height)
+                Debug.WriteLine("level picker is opening");
+            else
+                Debug.WriteLine("THIS IS BULLSHIT");
+            
+            background_anim.Pause();
         }
     }
 }

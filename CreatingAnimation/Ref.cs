@@ -9,7 +9,13 @@ namespace Cuboku
     class Ref<T>
     {
         public T value;
-        public Ref(T initValue) { value = initValue; }
+        public Ref(T initValue) { 
+            value = initValue; 
+        }
+        public Ref(Ref<T> initValue) { 
+            if (initValue != null) 
+                value = initValue.value; 
+        }
         public Ref() {}
     }
 }

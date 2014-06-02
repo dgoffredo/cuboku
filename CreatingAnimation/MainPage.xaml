@@ -46,11 +46,11 @@
                     <Storyboard x:Name="background_anim" AutoReverse="True" RepeatBehavior="Forever">
                         <DoubleAnimation Storyboard.TargetName="background_tran"
                                          Storyboard.TargetProperty="ScaleX"
-                                         Duration="0:10:00"
+                                         Duration="0:1:00"
                                          From="1" To="1.5" />
                         <DoubleAnimation Storyboard.TargetName="background_tran"
                                          Storyboard.TargetProperty="ScaleY"
-                                         Duration="0:10:00"
+                                         Duration="0:1:00"
                                          From="1" To="2" />
                     </Storyboard>
                 </BeginStoryboard>
@@ -65,13 +65,25 @@
             <!--<TextBlock Style="{StaticResource PhoneTextTitle1Style}" HorizontalAlignment="Center">
                 Level 1
             </TextBlock>-->
-            <toolkit:ListPicker HorizontalAlignment="Stretch" x:Name="LevelSelector"  BorderThickness="0">
+            <!--
+            <toolkit:ListPicker HorizontalAlignment="Stretch" x:Name="LevelSelector"  
+                                BorderThickness="0" 
+                                Tap="LevelSelector_Tap"
+                                LostFocus="LevelSelector_LostFocus"
+                                ManipulationStarted="LevelSelector_ManipulationStarted"
+                                ManipulationCompleted="LevelSelector_ManipulationCompleted"
+                                SelectionChanged="LevelSelector_SelectionChanged"
+                                GotFocus="LevelSelector_GotFocus"
+                                SizeChanged="LevelSelector_SizeChanged">
                 <toolkit:ListPicker.Items>
                     <toolkit:ListPickerItem Tag="1" Content="Level 3" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
                     <toolkit:ListPickerItem Tag="2" Content="Level 2" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
                     <toolkit:ListPickerItem Tag="2" Content="more..." FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
                 </toolkit:ListPicker.Items>
             </toolkit:ListPicker>
+            -->
+            <phone:LongListSelector Height="130" Canvas.Top="5" Width="470">
+            </phone:LongListSelector>
         </StackPanel>
 
         <Grid x:Name="LayoutRoot" Background="Transparent" Canvas.Top="140"
@@ -2093,7 +2105,7 @@
                         p:Name="rightSliderRegion" 
                         Margin="0,0,20,0" Visibility="Visible" />
                     <Slider Height="477"
-                	    Minimum="0" Maximum="5" Orientation="Vertical" SmallChange="1" 
+                	    Minimum="0" Maximum="10" Orientation="Vertical" SmallChange="1" 
                 	    VerticalAlignment="Bottom" HorizontalAlignment="Right"
                 	    ValueChanged="slider_valueChanged" p:Name="planeSelectSliderRight" 
                         Margin="0,0,20,0" Visibility="Visible">
@@ -2113,7 +2125,7 @@
                            Visibility="Visible" 
                            Height="121"
                            Margin="-10,0,0,0"></Rectangle>
-            
+
                 <phone:Pivot x:Name="numPicker"
                          VerticalAlignment="Bottom" CharacterSpacing="0" FontSize="12"
                          SelectionChanged="numPickerChanged" VerticalContentAlignment="Center"
@@ -2172,7 +2184,7 @@
                     </phone:PivotItem>
                 </phone:Pivot>
             </Grid>
-            
+
         </Grid>
     </Canvas>
 
