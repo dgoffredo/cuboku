@@ -373,16 +373,19 @@ namespace Cuboku
             if (Object.ReferenceEquals(goingTo, leavingBehind))
                 throw new Exception("We cannot go from now to now -- now simply is.");
             else if (goingTo.Count == 0)
+            {
+                Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(25));
                 return;
+            }
 
             CellChange newVal = goingTo.Pop();
             XYZ p = newVal.position;
 
             leavingBehind.Push(new CellChange(p, numbers[p.x, p.y, p.z].value)); // In case we return
             
-            Border cell = cells.original[p.y, p.y, p.z];
+            Border cell = cells.original[p.x, p.y, p.z];
             setCellToNumber(cell, newVal.value, false);
-            // selectCell(cell);
+            selectCell(cell);
         }
 
         private void goBack() {
@@ -466,6 +469,7 @@ namespace Cuboku
 
         Border selected = null;
         bool justSelected = false;
+        bool programmaticPick = false;
         bool stoppingDueToGesture = false;
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -812,7 +816,10 @@ namespace Cuboku
                 selected = cell;
                 string numberText = (cell.Child as TextBlock).Text;
                 if (numberText.Length != 0) // bring selector to that number
+                {
+                    programmaticPick = true;
                     numPicker.SelectedIndex = int.Parse(numberText) - 1;
+                }
 
                 if (!pickerShowing)
                     PickerInOut.Begin();
@@ -1116,7 +1123,7 @@ namespace Cuboku
         {
             Debug.WriteLine("Was the tap within the cube? {0}", inCube(e));
 
-            if (justSelected == true)
+            if (justSelected)
             {
                 Debug.WriteLine("Just selected: not going to change UI.");
                 justSelected = false;
@@ -1313,13 +1320,14 @@ namespace Cuboku
 
         private void setCellToNumber(Border cell, int newNum, bool recordInHistory = true)
         {
-            setCellNumber(cell, newNum);
-
             if (recordInHistory)
             {
+                Debug.WriteLine("DIE, HISTORY, DIE! DIEEE!!!!!!!!!");
                 future.Clear();
                 past.Push(valueFromCell(cell));
             }
+
+            setCellNumber(cell, newNum);
 
             HashSet<XYZ> conflicts = checkCorrectness(cell);
             
@@ -1340,13 +1348,17 @@ namespace Cuboku
         {
             if (numPickerChangedBefore)
             {
-                justSelected = true;
-                if (selected != null)
-                    setCellBasedOnNumPicker(selected);
+                if (!programmaticPick)
+                {
+                    justSelected = true;
+                    if (selected != null)
+                        setCellBasedOnNumPicker(selected);
+                }
+                else
+                    programmaticPick = false; // So they set it from the code, not the UI.
             }
             else
             {
-                Debug.WriteLine("THERE'S A FIRST TIME FOR EVERYTHING");
                 numPickerChangedBefore = true; // Don't do anything the first time.
             }
         }
