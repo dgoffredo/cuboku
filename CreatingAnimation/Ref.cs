@@ -3,19 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace Cuboku
 {
+    [DataContract]
     class Ref<T>
     {
+        [DataMember]
         public T value;
+
         public Ref(T initValue) { 
             value = initValue; 
         }
+
         public Ref(Ref<T> initValue) { 
-            if (initValue != null) 
-                value = initValue.value; 
+            value = initValue.value; 
         }
+
         public Ref() {}
+
+        public override string ToString()
+        {
+            return value.ToString();
+        }
     }
 }

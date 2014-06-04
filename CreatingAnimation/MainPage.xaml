@@ -2198,7 +2198,7 @@
 
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="tell David how awesome this is" />
-                <shell:ApplicationBarMenuItem Text="this is the best ever" />
+                <shell:ApplicationBarMenuItem Text="generate random puzzle" Click="ApplicationBarMenuItem_Click_1" />
             </shell:ApplicationBar.MenuItems>
 
         </shell:ApplicationBar>

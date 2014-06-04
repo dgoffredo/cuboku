@@ -99,12 +99,14 @@
     <Compile Include="CyclicIterator.cs" />
     <Compile Include="CubeView.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="SerialArray.cs" />
     <Compile Include="Mappers.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModuloVector.cs" />
     <Compile Include="Planes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomPuzzle.cs" />

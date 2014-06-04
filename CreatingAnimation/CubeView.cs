@@ -13,26 +13,17 @@ namespace Cuboku
         public static readonly Matrix rhZ = new Matrix(new double[,] { {  0, 1, 0 },
                                                                        { -1, 0, 0 },
                                                                        {  0, 0, 1 } });
+        public static readonly Matrix lhZ = rhZ.Invert();
 
-        public static readonly Matrix lhZ = new Matrix(new double[,] { { 0, -1, 0 },
-                                                                       { 1,  0, 0 },
-                                                                       { 0,  0, 1 } });
-        
         public static readonly Matrix lhY = new Matrix(new double[,] { {  0, 0, 1 },
                                                                        {  0, 1, 0 },
                                                                        { -1, 0, 0 } });
-
-        public static readonly Matrix rhY = new Matrix(new double[,] { { 0, 0, -1 },
-                                                                       { 0, 1,  0 },
-                                                                       { 1, 0,  0 } });
+        public static readonly Matrix rhY = lhY.Invert();
 
         public static readonly Matrix rhX = new Matrix(new double[,] { { 1,  0, 0 },
                                                                        { 0,  0, 1 },
                                                                        { 0, -1, 0 } });
-
-        public static readonly Matrix lhX = new Matrix(new double[,] { { 1, 0,  0 },
-                                                                       { 0, 0, -1 },
-                                                                       { 0, 1,  0 } });
+        public static readonly Matrix lhX = rhX.Invert();
     }
 
     public interface RotatableCovariant
@@ -57,10 +48,15 @@ namespace Cuboku
 
     public interface Rotatable : RotatableCovariant, RotatableContravariant {}
 
+    public interface FreelyRotatable : RotatableCovariant
+    {
+        void applyTransformation(Matrix tran);
+    }
+
     class CubeView<T> where T : new()
     {
         protected T[,,] target;
-        protected Matrix transformation;
+        public Matrix transformation;
 
         public static int sideLength {
             get { return 3; }
@@ -107,6 +103,15 @@ namespace Cuboku
                 target[idx[0], idx[1], idx[2]] = value;
             }
         }
+
+        public string serializedValue {
+            get {
+                return ""; // TODO: stub
+            }
+
+            set { // TODO: stub
+            }
+        }
     }
 
     class RotatableCubeView<T> : CubeView<T>, Rotatable where T : new()
@@ -137,7 +142,7 @@ namespace Cuboku
         }
     }
 
-    class MirroredCubeView<T> : RotatableCovariant where T : new()
+    class MirroredCubeView<T> : FreelyRotatable where T : new()
     {
         RotatableCubeView<T> _primary;
         RotatableCubeView<T> _mirror;
@@ -163,6 +168,17 @@ namespace Cuboku
             _mirror = temp;
 
             return this;
+        }
+
+        public void applyTransformation(Matrix tran)
+        {
+            _primary.transformation = tran * _primary.transformation;
+            _mirror.transformation = _mirror.transformation * tran.Invert();
+        }
+
+        public Matrix getTransformation()
+        {
+            return _primary.transformation.Duplicate();
         }
 
         public CubeView<T> mirror { get { return _mirror; } }

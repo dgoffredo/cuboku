@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
 using XYZ = Cuboku.Translation<int>;
 
 namespace Cuboku
 {
+    [DataContract]
     class CellChange
     {
+        [DataMember]
         public XYZ position = new XYZ();
+        [DataMember]
         public int value = 0;
 
         static bool validPosition(XYZ pos) {

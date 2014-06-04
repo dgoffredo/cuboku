@@ -21,6 +21,7 @@ using Plane = Cuboku.Planes.Plane;
 using HttpClient = System.Net.Http.HttpClient;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
 namespace Cuboku
@@ -30,10 +31,14 @@ namespace Cuboku
     // Generic 3D point. I would have used the name "Point" except
     // that this is used to contain things like DoubleAnimations as well
     // as numbers, so it more represents some displacement in space.
+    [DataContract]
     public class Translation<T> where T : new()
     {
+        [DataMember]
         public T x { get; set; }
+        [DataMember]
         public T y { get; set; }
+        [DataMember]
         public T z { get; set; }
 
         public Translation(T xIn, T yIn, T zIn)
@@ -118,6 +123,8 @@ namespace Cuboku
 
     public partial class MainPage : PhoneApplicationPage
     {
+        const string stateFilename = "game_state.json";
+
         MirroredCubeView<Translation<double>> coordinates;
         MirroredCubeView<Translation<double>> dragCoordinates;
         MirroredCubeView<CellPlacer> places;
@@ -127,10 +134,9 @@ namespace Cuboku
         MirroredCubeView<Border> cells;
         MirroredCubeView<Ref<bool>> isPreset;
         
-        MirroredCubeView<Ref<bool>> isWrong;
         MirroredCubeView<HashSet<XYZ>> wrongers;
 
-        RotatableCovariant[] rotationSubscribers;
+        FreelyRotatable[] rotationSubscribers;
         HashSet<int> fullSet = new HashSet<int>(new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9});
 
         Plane[] planes = Planes.makePlanes();
@@ -160,14 +166,17 @@ namespace Cuboku
             Debug.WriteLine("Aaaaaaaand we're back.");
         }
 
-        public MainPage()
+        private void saveOnClose(Object whoSentYou, ClosingEventArgs args)
         {
+            Debug.WriteLine("Before closing, we're going to first save our state to persistent storage.");
+            saveState();
+        }
 
-            InitializeComponent();
-
+        private void requiredInitialization()
+        {
             planeSelectSliderRight.Value = 3;
-
             PhoneApplicationService.Current.Activated += new EventHandler<ActivatedEventArgs>(iAmZombie);
+            PhoneApplicationService.Current.Closing += new EventHandler<ClosingEventArgs>(saveOnClose);
 
             places = new MirroredCubeView<CellPlacer>(
                 new CellPlacer[,,] {
@@ -221,6 +230,39 @@ namespace Cuboku
                       {cell_2_2_0, cell_2_2_1, cell_2_2_2} }
                 });
 
+            coordinates = new MirroredCubeView<Translation<double>>();
+            initializeCoordinates(coordinates);
+            dragCoordinates = new MirroredCubeView<Translation<double>>();
+            Mappers.forEach<Translation<double>, Translation<double>>(dragCoordinates, coordinates, Mappers.setEqual);
+
+            // Note that things like numbers, colors, etc. are not rotated.
+            rotationSubscribers = new FreelyRotatable[] { coordinates, dragCoordinates, cells };
+
+            foreach (int i in Enumerable.Range(0, 3))
+                foreach (int j in Enumerable.Range(0, 3))
+                    foreach (int k in Enumerable.Range(0, 3))
+                    {
+                        planesThrough[i,j,k] = from plane in planes
+                                               where plane.predicate(i, j, k)
+                                               select plane;
+                    }
+
+            wrongers = new MirroredCubeView<HashSet<XYZ>>(
+                new HashSet<XYZ>[,,]{
+                    { {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
+                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
+                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} },                   
+                    { {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
+                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
+                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} },
+                    { {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
+                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
+                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} }
+                });
+        }
+
+        private void defaultAdditionalInitialization()
+        {
             isPreset = new MirroredCubeView<Ref<bool>>(
                 new Ref<bool>[,,]{
                     { {new Ref<bool>(), new Ref<bool>(), new Ref<bool>()},
@@ -237,24 +279,6 @@ namespace Cuboku
             Mappers.forEach(isPreset, cells, 
                             (Ref<bool> whether, Border cell) => { whether.value = originallyPresetCell(cell); });
 
-            isWrong = new MirroredCubeView<Ref<bool>>(
-                new Ref<bool>[,,]{
-                    { {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
-                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
-                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)} },                   
-                    { {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
-                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
-                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)} },
-                    { {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
-                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)},
-                      {new Ref<bool>(false), new Ref<bool>(false), new Ref<bool>(false)} }
-                });
-
-            coordinates = new MirroredCubeView<Translation<double>>();
-            initializeCoordinates(coordinates);
-            dragCoordinates = new MirroredCubeView<Translation<double>>();
-            Mappers.forEach<Translation<double>, Translation<double>>(dragCoordinates, coordinates, Mappers.setEqual);
-
             numbers = new MirroredCubeView<Ref<int>>(
                 new Ref<int>[,,]{
                     { {new Ref<int>(parseIntOrZero((cell_0_0_0.Child as TextBlock).Text)), new Ref<int>(parseIntOrZero((cell_0_0_1.Child as TextBlock).Text)), new Ref<int>(parseIntOrZero((cell_0_0_2.Child as TextBlock).Text))},
@@ -268,103 +292,180 @@ namespace Cuboku
                       {new Ref<int>(parseIntOrZero((cell_2_2_0.Child as TextBlock).Text)), new Ref<int>(parseIntOrZero((cell_2_2_1.Child as TextBlock).Text)), new Ref<int>(parseIntOrZero((cell_2_2_2.Child as TextBlock).Text))} }
                 });
 
-            wrongers = new MirroredCubeView<HashSet<XYZ>>(
-                new HashSet<XYZ>[,,]{
-                    { {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
-                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
-                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} },                   
-                    { {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
-                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
-                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} },
-                    { {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
-                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
-                      {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} }
-                });
-
-            // Note that things like numbers, colors, etc. are not rotated.
-            rotationSubscribers = new RotatableCovariant[] { coordinates, dragCoordinates, cells };
-
-            foreach (int i in Enumerable.Range(0, 3))
-                foreach (int j in Enumerable.Range(0, 3))
-                    foreach (int k in Enumerable.Range(0, 3))
-                    {
-                        planesThrough[i,j,k] = from plane in planes
-                                               where plane.predicate(i, j, k)
-                                               select plane;
-                    }
-
             resetCube(RandomPuzzle.create(difficulty)); // Remove this to play the static puzzle.
+        }
+
+        public MainPage()
+        {
+            InitializeComponent();
+
+            requiredInitialization();
+
+            bool loaded = loadState();
+            if (loaded)
+                Debug.WriteLine("Successfully loaded state from file.");
+            if (!loaded)
+            {
+                Debug.WriteLine("Wasn't able to load state from file. Initializing defaults.");
+                defaultAdditionalInitialization();
+            }
+        }
+
+        int[,,] deducePuzzle()
+        {
+            Func<int, int, int, int> val = 
+                (x, y, z) => isPreset[x,y,z].value ? numbers.data[x,y,z].value : 0;
+
+            return new int[,,] {
+                    { {val(0, 0, 0), val(0, 0, 1), val(0, 0, 2)},
+                      {val(0, 1, 0), val(0, 1, 1), val(0, 1, 2)},
+                      {val(0, 2, 0), val(0, 2, 1), val(0, 2, 2)} },
+                    { {val(1, 0, 0), val(1, 0, 1), val(1, 0, 2)},
+                      {val(1, 1, 0), val(1, 1, 1), val(1, 1, 2)},
+                      {val(1, 2, 0), val(1, 2, 1), val(1, 2, 2)} },
+                    { {val(2, 0, 0), val(2, 0, 1), val(2, 0, 2)},
+                      {val(2, 1, 0), val(2, 1, 1), val(2, 1, 2)},
+                      {val(2, 2, 0), val(2, 2, 1), val(2, 2, 2)} }
+                };
+        }
+
+        GameState collectGameState()
+        {
+            GameState state = new GameState();
+
+            state.numbers.readFrom(numbers.data);
+            state.isPreset.readFrom(isPreset.data);
+            state.transformation.readFrom(numbers.getTransformation().mat);
+            state.past = past.ToArray();
+            state.future = future.ToArray();
+            state.difficulty = difficulty;
+            state.secondsElapsed = secondsElapsed;
+            state.selection = selected == null ? null : getCellXYZ(selected);
             
-            // loadState();
+            // TODO: Come up with a useful way to store the "puzzle"
+            state.puzzle.readFrom(deducePuzzle());
+
+            return state;
+        }
+
+        // Returns true if successful, false otherwise.
+        bool enactGameState(GameState state)
+        {
+            const int d = 3; // dimension
+
+            Ref<int>[,,] rawNumbers = new Ref<int>[d, d, d];
+            state.numbers.writeTo(rawNumbers);
+            numbers = new MirroredCubeView<Ref<int>>(rawNumbers);
+
+            Ref<bool>[,,] rawIsPreset = new Ref<bool>[d, d, d];
+            state.isPreset.writeTo(rawIsPreset);
+            isPreset = new MirroredCubeView<Ref<bool>>(rawIsPreset);
+
+            past = new Stack<CellChange>(state.past);
+            future = new Stack<CellChange>(state.past);
+
+            secondsElapsed = state.secondsElapsed;
+            
+            double[,] rawTransformation = new double[d, d];
+            state.transformation.writeTo(rawTransformation);
+            Matrix transformation = new Matrix(rawTransformation);
+
+            animationTime = 3.0;
+            Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setFromOfAnimation);
+
+            foreach (var cube in rotationSubscribers)
+                cube.applyTransformation(transformation);
+
+            Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setToOfAnimation);
+            
+            Mappers.forEach(cells, (Border c) => { checkCorrectness(c); });
+
+            Twistidoo.Begin();
+            return true;
         }
 
         private void writeGameState(System.IO.Stream stream)
         {
-            GameState state = new GameState();
-            // state.numbers = numbers; // nope
-
-            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(GameState));
-            ser.WriteObject(stream, state);
+            try
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(GameState));
+                ser.WriteObject(stream, collectGameState());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Caught exception: {0}", ex);
+            }
         }
 
-        private void loadState()
+        private GameState readGameState(System.IO.Stream stream)
         {
-            const string stateFilename = "game_state.json";
-            try {
+            try
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(GameState));
+                GameState state = (GameState)ser.ReadObject(stream);
+                return state;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Caught exception: {0}", ex);
+                throw;
+            }
+        }
+
+        private void saveState()
+        {
+            IsolatedStorageFileStream fs = null;
+
+            try
+            {
                 IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
 
+                if (savegameStorage.FileExists(stateFilename))
+                    fs = savegameStorage.OpenFile(stateFilename, System.IO.FileMode.Truncate);
+                else 
+                    fs = savegameStorage.CreateFile(stateFilename);
+
+                if (fs == null)
+                    throw new Exception("Bad things!");
+   
+                writeGameState(fs);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            finally 
+            {
+                if (fs != null)
+                    fs.Close();
+            }
+        }
+
+        // Returns true if successful, false otherwise.
+        private bool loadState()
+        {    
+            try {
+                IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
+                
                 if (!savegameStorage.FileExists(stateFilename))
                 {
-                    using (IsolatedStorageFileStream fs = savegameStorage.CreateFile(stateFilename))
-                    {
-                        if (fs == null) {
-                            Debug.WriteLine("Bad things!");
-                            return;
-                        }
-
-                        // Write
-                        using (StreamWriter writer = new StreamWriter(fs))
-                        {
-                            writer.WriteLine("There's a first time for everything.");
-                        }
-                    }
+                    Debug.WriteLine("The file {0} doesn't exist yet.", stateFilename);
+                    return false;
                 }
-                else
-                {
-                    using (IsolatedStorageFileStream fs = savegameStorage.OpenFile(stateFilename, System.IO.FileMode.Append))
-                    {
-                        if (fs == null) {
-                            Debug.WriteLine("More bad things!");
-                            return;
-                        }
-
-                        // Write
-                        //using (StreamWriter writer = new StreamWriter(fs))
-                        //{
-                        //    writer.WriteLine("I am a shoe.");
-                        //}
-
-                        writeGameState(fs);
-                    }
-                }
-
+                
                 using (IsolatedStorageFileStream fs = savegameStorage.OpenFile(stateFilename, System.IO.FileMode.Open))
                 {
-                    if (fs == null) {
-                        Debug.WriteLine("Why won't bad things stop happening?");
-                        return;
-                    }
+                    if (fs == null)
+                        throw new Exception("Why won't bad things stop happening?");
  
-                    // Read
-                    using (StreamReader reader = new StreamReader(fs))
-                    {
-                        Debug.WriteLine("The length is {0}. It says {1}", fs.Length, reader.ReadToEnd());
-                    }
+                    GameState state = readGameState(fs);
+                    return enactGameState(state);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Caught a nasty exception thingy when trying to loadState(): {0}", ex);
+                return false;
             }
         }
 
@@ -599,8 +700,12 @@ namespace Cuboku
             if (sliderShowing)
                 SliderInOut.Begin();
 
-            // Clear wrongers
+            // Clear wrongers (maybe unnecessary)
             Mappers.forEach(wrongers, (HashSet<XYZ> set) => set.Clear());
+
+            // Clear move histories
+            future.Clear();
+            past.Clear();
 
             // Set cell colors
             Mappers.forEach(cells.original, bgColors,
@@ -1199,6 +1304,11 @@ namespace Cuboku
             doRotation(Direction.Down);
         }
 
+        private void ApplicationBarMenuItem_Click_1(object sender, EventArgs e)
+        {
+            resetCube(RandomPuzzle.create(difficulty));
+        }
+
         private bool isWin()
         {
             foreach (var plane in planes)
@@ -1303,13 +1413,27 @@ namespace Cuboku
             }
         }
 
-        private void setCellNumber(Border cell, int number)
+        private static void setCellText(Border cell, int number)
         {
             TextBlock block = cell.Child as TextBlock;
             block.Text = number != 0 ? number.ToString() : "";
+        }
+
+        private void setCellNumber(Border cell, int number)
+        {
+            setCellText(cell, number);
 
             XYZ p = getCellXYZ(cell); 
             numbers[p.x, p.y, p.z].value = number;
+        }
+
+        private void updateNumberText()
+        {
+            // Make sure the text reflects the numbers,
+            // and also check correctness (to change color).
+
+            Mappers.forEach(numbers, cells, (Ref<int> n, Border c) => { setCellText(c, n.value); });
+            Mappers.forEach(cells, (Border c) => { checkCorrectness(c); });
         }
 
         private CellChange valueFromCell(Border cell)
