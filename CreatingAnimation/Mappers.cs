@@ -84,6 +84,17 @@ namespace Cuboku
                         actor(cube[i, j, k]);
         }
 
+        public static void printEach<T>(T[,,] cube)
+            where T : new()
+        {
+            const int sideLength = 3;
+            
+            for (int i = 0; i < sideLength; ++i)
+                for (int j = 0; j < sideLength; ++j)
+                    for (int k = 0; k < sideLength; ++k)
+                        Debug.WriteLine("({0}, {1}, {2}): {3}", i, j, k, cube[i, j, k]);
+        }
+
         public delegate bool PointPredicate(int i, int j, int k);
 
         public static void forEachThat<T1>(CubeView<T1> cube, PointPredicate pred, UnaryActor<T1> actor)

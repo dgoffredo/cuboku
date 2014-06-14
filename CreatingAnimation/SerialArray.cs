@@ -36,7 +36,8 @@ namespace Cuboku
             List<T> readData = new List<T>();
             ModuloVector mv = new ModuloVector(lengths);
             do {
-                readData.Add((T)a.GetValue(mv.theArray()));
+                T item = (T)a.GetValue(mv.theArray());
+                readData.Add(item);
             } while ( !(++mv).isZero() );
 
             data = readData.ToArray();

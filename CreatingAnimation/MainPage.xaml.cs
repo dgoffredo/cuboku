@@ -143,6 +143,8 @@ namespace Cuboku
         CyclicIterator<Plane> currentPlane = null;
         bool isGlowing = false;
 
+        List<Tuple<Action, int>> todoQueue = new List<Tuple<Action, int>>();
+
         int secondsElapsed = 0;
 
         int difficulty = 15;
@@ -335,7 +337,7 @@ namespace Cuboku
 
             state.numbers.readFrom(numbers.data);
             state.isPreset.readFrom(isPreset.data);
-            state.transformation.readFrom(numbers.getTransformation().mat);
+            state.transformation.readFrom(cells.getTransformation().mat);
             state.past = past.ToArray();
             state.future = future.ToArray();
             state.difficulty = difficulty;
@@ -364,23 +366,47 @@ namespace Cuboku
             past = new Stack<CellChange>(state.past);
             future = new Stack<CellChange>(state.past);
 
+            // Clear wrongers (maybe unnecessary)
+            Mappers.forEach(wrongers, (HashSet<XYZ> set) => set.Clear());
+
+            #region CopiedFromResetCube
+            // Set cell colors
+            Mappers.forEach(cells.original, bgColors,
+                    (Border c, SolidColorBrush bgColor) => {
+                        c.Background = bgColor;
+
+                        XYZ p = getCellXYZ(c);
+                        (c.Child as TextBlock).Foreground = makeFgColor(c, p.x, p.y, p.z);
+                    });
+
+            // Set cell text according to numbers
+            Mappers.forEach(cells.original, numbers,
+                    (Border c, Ref<int> num) => {
+                        setCellNumber(c, num.value);
+                    });
+            #endregion
+
+            Mappers.forEach(cells, (Border c) => { checkCorrectness(c); });
+
             secondsElapsed = state.secondsElapsed;
             
             double[,] rawTransformation = new double[d, d];
             state.transformation.writeTo(rawTransformation);
             Matrix transformation = new Matrix(rawTransformation);
 
-            animationTime = 3.0;
-            Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setFromOfAnimation);
+            todoQueue.Add(new Tuple<Action, int>(() => {
+                Debug.WriteLine("Hey asshole, is this code running or not?");
+                animationTime = 3.0;
+                Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setFromOfAnimation);
 
-            foreach (var cube in rotationSubscribers)
-                cube.applyTransformation(transformation);
+                foreach (var cube in rotationSubscribers)
+                    cube.applyTransformation(transformation);
 
-            Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setToOfAnimation);
-            
-            Mappers.forEach(cells, (Border c) => { checkCorrectness(c); });
+                Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setToOfAnimation);
 
-            Twistidoo.Begin();
+                Twistidoo.Begin();
+            }, 500));
+
             return true;
         }
 
@@ -992,7 +1018,10 @@ namespace Cuboku
                 selectCell(cell);
             }
 
-            Debug.WriteLine("Tippy tap on {0}", cell.Name);
+            XYZ p = getCellXYZ(cell);
+            Debug.WriteLine("Tippy tap on {0}. (x,y,z)=({1},{2},{3}) isPreset={4} number={5}", 
+                            cell.Name, p.x, p.y, p.z, isPreset[p.x, p.y, p.z],
+                            numbers[p.x, p.y, p.z]);
         }
 
         void boing_Completed(object sender, EventArgs e)
@@ -1308,6 +1337,16 @@ namespace Cuboku
         {
             resetCube(RandomPuzzle.create(difficulty));
         }
+        
+        private void ApplicationBarMenuItem_Click_2(object sender, EventArgs e)
+        {
+            loadState();
+        }
+        
+        private void ApplicationBarMenuItem_Click_3(object sender, EventArgs e)
+        {
+            saveState();
+        }
 
         private bool isWin()
         {
@@ -1332,14 +1371,10 @@ namespace Cuboku
             XYZ p = getCellXYZ(cell);
             int num = numbers[p.x, p.y, p.z].value;
 
-            Debug.WriteLine("Checking correctness of cell at ({0}, {1}, {2}). It has value {3}", 
-                            p.x, p.y, p.z, num);
-
             HashSet<XYZ> dupes = new HashSet<XYZ>(comparePoints);
 
             if (num == 0)
             {
-                Debug.WriteLine("({0},{1},{2}) is zero", p.x, p.y, p.z);
                 // Can't conflict with anything, since it doesn't have a number.
                 // (Zero is the value for a blank cell).
                 wrongers[p.x, p.y, p.z].Clear();
@@ -1363,7 +1398,6 @@ namespace Cuboku
                     }
                 }
 
-                Debug.WriteLine("Found {0} distinct dupes.", dupes.Count);
                 wrongers[p.x, p.y, p.z] = dupes;
 
                 if (dupes.Count > 0) // Have to mark the dupes
@@ -1525,6 +1559,10 @@ namespace Cuboku
             }, 1000);
 
             // sendData();
+
+            foreach (Tuple<Action, int> whatAndWhen in todoQueue) {
+                doAfter(whatAndWhen.Item1, whatAndWhen.Item2);
+            }
         }
 
         private async void sendData()
@@ -1572,12 +1610,12 @@ namespace Cuboku
 
         private void PageCanvas_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            Debug.WriteLine("Canvas tap");
+            // Debug.WriteLine("Canvas tap");
         }
 
         private void LayoutRoot_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            Debug.WriteLine("LayoutRoot tap");
+            // Debug.WriteLine("LayoutRoot tap");
         }
 
         private Border cellFromTapPad(Rectangle pad)
@@ -1592,49 +1630,9 @@ namespace Cuboku
             cell_Tap(cellFromTapPad(rec), null);
         }
 
-        private void LevelSelector_Tap(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-            Debug.WriteLine("Tapped the level selector");
-            // background_anim.Pause();
-        }
-
-        private void LevelSelector_LostFocus(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("Level selector lost focus");
-            // background_anim.Resume();
-        }
-
-        private void LevelSelector_ManipulationStarted(object sender, ManipulationStartedEventArgs e)
-        {
-            Debug.WriteLine("Level selector manip begin");
-            // background_anim.Pause();
-        }
-
-        private void LevelSelector_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
-        {
-            Debug.WriteLine("Level selector manip end");
-        }
-
         private void LevelSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.WriteLine("Level changed: {0}", e);
-        }
-
-        private void LevelSelector_GotFocus(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("Level selector got focus");
-        }
-
-        private void LevelSelector_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.PreviousSize.Height > e.NewSize.Height)
-                Debug.WriteLine("level picker is closing");
-            else if (e.PreviousSize.Height < e.NewSize.Height)
-                Debug.WriteLine("level picker is opening");
-            else
-                Debug.WriteLine("THIS IS BULLSHIT");
-            
-            background_anim.Pause();
         }
     }
 }

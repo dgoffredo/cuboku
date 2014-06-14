@@ -65,25 +65,16 @@
             <!--<TextBlock Style="{StaticResource PhoneTextTitle1Style}" HorizontalAlignment="Center">
                 Level 1
             </TextBlock>-->
-            <!--
             <toolkit:ListPicker HorizontalAlignment="Stretch" x:Name="LevelSelector"  
-                                BorderThickness="0" 
-                                Tap="LevelSelector_Tap"
-                                LostFocus="LevelSelector_LostFocus"
-                                ManipulationStarted="LevelSelector_ManipulationStarted"
-                                ManipulationCompleted="LevelSelector_ManipulationCompleted"
-                                SelectionChanged="LevelSelector_SelectionChanged"
-                                GotFocus="LevelSelector_GotFocus"
-                                SizeChanged="LevelSelector_SizeChanged">
+                                BorderThickness="0">
                 <toolkit:ListPicker.Items>
                     <toolkit:ListPickerItem Tag="1" Content="Level 3" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
                     <toolkit:ListPickerItem Tag="2" Content="Level 2" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
-                    <toolkit:ListPickerItem Tag="2" Content="more..." FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+                    <toolkit:ListPickerItem Tag="3" Content="Level 1" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+                    <toolkit:ListPickerItem Tag="4" Content="Level 0" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
+                    <toolkit:ListPickerItem Tag="5" Content="Level -1" HorizontalContentAlignment="Center" FontFamily="{StaticResource PhoneFontFamilySemiLight}" FontSize="{StaticResource PhoneFontSizeExtraExtraLarge}"/>
                 </toolkit:ListPicker.Items>
             </toolkit:ListPicker>
-            -->
-            <phone:LongListSelector Height="130" Canvas.Top="5" Width="470">
-            </phone:LongListSelector>
         </StackPanel>
 
         <Grid x:Name="LayoutRoot" Background="Transparent" Canvas.Top="140"
@@ -110,6 +101,7 @@
 
                 <System:Double x:Key="rightSliderInitialXOffset">75</System:Double>
                 <System:Double x:Key="numPickerInitialYOffset">200</System:Double>
+                <System:Double x:Key="pickerFontSize">55<!--62--></System:Double>
                 <!--<System:String x:Key="sharedDuration">0:0:3</System:String>-->
 
                 <Storyboard x:Name="PickerInOut" FillBehavior="HoldEnd" Completed="PickerInOut_Completed">
@@ -2136,50 +2128,56 @@
                                             Y="{StaticResource numPickerInitialYOffset}" 
                                             X="0" />
                     </phone:Pivot.RenderTransform>
-
+<!--
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">1</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">_</TextBlock>
+                        </phone:PivotItem.Header>
+                    </phone:PivotItem>
+-->
+                    <phone:PivotItem CacheMode="{p:Null}">
+                        <phone:PivotItem.Header>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">1</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">2</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">2</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">3</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">3</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">4</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">4</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">5</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">5</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">6</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">6</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">7</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">7</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">8</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">8</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                     <phone:PivotItem CacheMode="{p:Null}">
                         <phone:PivotItem.Header>
-                            <TextBlock FontSize="62">9</TextBlock>
+                            <TextBlock FontSize="{StaticResource pickerFontSize}">9</TextBlock>
                         </phone:PivotItem.Header>
                     </phone:PivotItem>
                 </phone:Pivot>
@@ -2197,7 +2195,8 @@
             <shell:ApplicationBarIconButton IconUri="/Resources/Images/settings.png" Text="settings" Click="ApplicationBarIconButton_Click_3" />
 
             <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="tell David how awesome this is" />
+                <shell:ApplicationBarMenuItem Text="save to persistent storage" Click="ApplicationBarMenuItem_Click_3" />
+                <shell:ApplicationBarMenuItem Text="load from persistent storage" Click="ApplicationBarMenuItem_Click_2" />
                 <shell:ApplicationBarMenuItem Text="generate random puzzle" Click="ApplicationBarMenuItem_Click_1" />
             </shell:ApplicationBar.MenuItems>
 
