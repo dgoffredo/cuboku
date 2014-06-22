@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Debug = System.Diagnostics.Debug;
 
-namespace Cuboku
+namespace Sudokudos
 {
     // I use this class as part of the implementation
     // of serializing multidimensional arrays.

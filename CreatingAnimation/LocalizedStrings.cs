@@ -1,6 +1,6 @@
-﻿using Cuboku.Resources;
+﻿using Sudokudos.Resources;
 
-namespace Cuboku
+namespace Sudokudos
 {
     /// <summary>
     /// Provides access to string resources.

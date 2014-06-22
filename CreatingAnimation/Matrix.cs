@@ -37,7 +37,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace Cuboku
+namespace Sudokudos
 {
 
     public class Matrix

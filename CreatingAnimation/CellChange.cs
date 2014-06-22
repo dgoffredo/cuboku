@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using XYZ = Cuboku.Translation<int>;
+using XYZ = Sudokudos.Translation<int>;
 
-namespace Cuboku
+namespace Sudokudos
 {
     [DataContract]
     class CellChange

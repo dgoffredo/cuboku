@@ -8,23 +8,23 @@ using System.Windows.Navigation;
 using System.Windows.Data;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Cuboku.Resources;
+using Sudokudos.Resources;
 using System.Windows.Media.Animation;
 using System.Windows.Media;
 using System.Windows.Input;
 using Windows.Phone.Devices.Notification;
 using Debug = System.Diagnostics.Debug;
-using TranslationAnimation = Cuboku.Translation<System.Windows.Media.Animation.DoubleAnimation>;
-using XYZ = Cuboku.Translation<int>;
+using TranslationAnimation = Sudokudos.Translation<System.Windows.Media.Animation.DoubleAnimation>;
+using XYZ = Sudokudos.Translation<int>;
 using Rectangle = System.Windows.Shapes.Rectangle;
-using Plane = Cuboku.Planes.Plane;
+using Plane = Sudokudos.Planes.Plane;
 using HttpClient = System.Net.Http.HttpClient;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 
-namespace Cuboku
+namespace Sudokudos
 {
     using Mtrx = Matrix;
 
@@ -147,7 +147,8 @@ namespace Cuboku
 
         int secondsElapsed = 0;
 
-        int difficulty = 15;
+        int difficulty = 10;
+        int level = 1;
 
         TranslationComparer<int> comparePoints = new TranslationComparer<int>();
 
@@ -341,6 +342,7 @@ namespace Cuboku
             state.past = past.ToArray();
             state.future = future.ToArray();
             state.difficulty = difficulty;
+            state.level = level;
             state.secondsElapsed = secondsElapsed;
             state.selection = selected == null ? null : getCellXYZ(selected);
             
@@ -389,7 +391,9 @@ namespace Cuboku
             Mappers.forEach(cells, (Border c) => { checkCorrectness(c); });
 
             secondsElapsed = state.secondsElapsed;
-            
+            setLevel(state.level);
+            difficulty = state.difficulty;
+
             double[,] rawTransformation = new double[d, d];
             state.transformation.writeTo(rawTransformation);
             Matrix transformation = new Matrix(rawTransformation);
@@ -408,6 +412,12 @@ namespace Cuboku
             }, 500));
 
             return true;
+        }
+
+        void setLevel(int newLevel)
+        {
+            level = newLevel;
+            levelText.Text = String.Format("Level {0}", newLevel);
         }
 
         private void writeGameState(System.IO.Stream stream)
@@ -465,6 +475,12 @@ namespace Cuboku
                 if (fs != null)
                     fs.Close();
             }
+        }
+
+        void deleteGameStateFile()
+        {
+            IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
+            savegameStorage.DeleteFile(stateFilename);
         }
 
         // Returns true if successful, false otherwise.
@@ -566,11 +582,11 @@ namespace Cuboku
             Twistidoo.Begin();
         }
 
-        static double dx = 124;
-        static double dy = -143;
-        static double dz = -150;
-        static double dxz = 43;
-        static double dyz = -43;
+        static double dx = 124; //150; // 124;
+        static double dy = -145; //-100; //-175; //-143;
+        static double dz = -150; //-160; //-150;
+        static double dxz = 43; //43;
+        static double dyz = -43; //-43;
         static Matrix projection = new Matrix(new double[,]{
             { dx,  0, dxz },
             {  0, dy, dyz },
@@ -732,6 +748,9 @@ namespace Cuboku
             // Clear move histories
             future.Clear();
             past.Clear();
+
+            // Reset game timer
+            secondsElapsed = 0;
 
             // Set cell colors
             Mappers.forEach(cells.original, bgColors,
@@ -1133,6 +1152,11 @@ namespace Cuboku
             return Math.Sqrt(Math.Pow(a, 2) + Math.Pow(b, 2));
         }
 
+        private void LevelPages_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
+        {
+            Debug.WriteLine("Pivot gesture ended.");
+        }
+
         private void PhoneApplicationPage_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
         {
             Debug.WriteLine("End of gesture.");
@@ -1312,25 +1336,27 @@ namespace Cuboku
             }
         }
 
-        private void ApplicationBarIconButton_Click_0(object sender, EventArgs e)
+        private void ApplicationBarIconButton_Click_Undo(object sender, EventArgs e)
         {
             // doRotation(Direction.Left);
             goBack();
         }
-        private void ApplicationBarIconButton_Click_1(object sender, EventArgs e)
+        private void ApplicationBarIconButton_Click_Redo(object sender, EventArgs e)
         {
             // doRotation(Direction.Right);
             goForward();
         }
-        private void ApplicationBarIconButton_Click_2(object sender, EventArgs e)
+        private void ApplicationBarIconButton_Click_Help(object sender, EventArgs e)
         {
             // stub
-            doRotation(Direction.Up);
+            // doRotation(Direction.Up);
+            MessageBox.Show("No help yet", "Not implemented", MessageBoxButton.OK);
         }
-        private void ApplicationBarIconButton_Click_3(object sender, EventArgs e)
+        private void ApplicationBarIconButton_Click_Settings(object sender, EventArgs e)
         {
             // stub
-            doRotation(Direction.Down);
+            // doRotation(Direction.Down);
+            MessageBox.Show("No settings yet", "Not implemented", MessageBoxButton.OK);
         }
 
         private void ApplicationBarMenuItem_Click_1(object sender, EventArgs e)
@@ -1493,12 +1519,25 @@ namespace Cuboku
             {
                 doAfter(() => {
                     Microsoft.Devices.VibrateController.Default.Start(TimeSpan.FromMilliseconds(300));
-                    MessageBox.Show("You win!", "Congrats", MessageBoxButton.OK);
+                    MessageBox.Show(String.Format("You win! It took you only {0} seconds.", secondsElapsed), 
+                                    "Congrats", 
+                                    MessageBoxButton.OK);
+
+                    levelUpAdjustDifficulty();
+
                     resetCube(RandomPuzzle.create(difficulty));
                 }, 500);
             }
             else
                 bounceConflicts(conflicts);
+        }
+
+        void levelUpAdjustDifficulty()
+        {
+            setLevel(level + 1);
+            if (level % 2 == 0
+                && difficulty < 18)
+                difficulty++;
         }
 
         bool numPickerChangedBefore = false;
@@ -1633,6 +1672,11 @@ namespace Cuboku
         private void LevelSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.WriteLine("Level changed: {0}", e);
+        }
+
+        private void ApplicationBarMenuItem_Click_4(object sender, EventArgs e)
+        {
+            deleteGameStateFile();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US"/>
-  <App xmlns="" ProductID="{4e07ebbd-02b5-4c5f-94a9-e852c8b2905b}" Title="Cuboku" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="Cuboku author" Description="Sample description" Publisher="Cuboku" PublisherID="{8df34f37-e316-4fd9-8395-f6eeeeb5656f}">
+  <App xmlns="" ProductID="{4e07ebbd-02b5-4c5f-94a9-e852c8b2905b}" Title="Sudokudos" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal"  Author="Sudokudos author" Description="Sample description" Publisher="Sudokudos" PublisherID="{8df34f37-e316-4fd9-8395-f6eeeeb5656f}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING"/>
@@ -20,7 +20,7 @@
           <SmallImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileSmall.png</SmallImageURI>
           <Count>0</Count>
           <BackgroundImageURI IsRelative="true" IsResource="false">Assets\Tiles\FlipCycleTileMedium.png</BackgroundImageURI>
-          <Title>Cuboku</Title>
+          <Title>Sudokudos</Title>
           <BackContent></BackContent>
           <BackBackgroundImageURI></BackBackgroundImageURI>
           <BackTitle></BackTitle>

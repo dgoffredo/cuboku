@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Phone
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreatingAnimation", "CreatingAnimation\CreatingAnimation.csproj", "{4E07EBBD-02B5-4C5F-94A9-E852C8B2905B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudokudos", "CreatingAnimation\Sudokudos.csproj", "{4E07EBBD-02B5-4C5F-94A9-E852C8B2905B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{688AC4CF-90C8-46F9-8D1F-E0E54D269F61}"
 	ProjectSection(SolutionItems) = preProject

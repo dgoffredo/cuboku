@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cuboku
+namespace Sudokudos
 {
     class Planes
     {

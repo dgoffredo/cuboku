@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Debug = System.Diagnostics.Debug;
 
-namespace Cuboku
+namespace Sudokudos
 {
     [DataContract]
     class SerialArray<T>

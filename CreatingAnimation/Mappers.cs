@@ -7,7 +7,7 @@ using System.Windows.Media.Animation;
 using System.Windows;
 using Debug = System.Diagnostics.Debug;
 
-namespace Cuboku
+namespace Sudokudos
 {
     class Mappers
     {

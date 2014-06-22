@@ -6,9 +6,9 @@ using System.Windows.Markup;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Cuboku.Resources;
+using Sudokudos.Resources;
 
-namespace Cuboku
+namespace Sudokudos
 {
     public partial class App : Application
     {
