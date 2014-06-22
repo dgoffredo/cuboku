@@ -145,7 +145,10 @@ namespace Sudokudos
 
         List<Tuple<Action, int>> todoQueue = new List<Tuple<Action, int>>();
 
-        int secondsElapsed = 0;
+        int secondsElapsed {
+            get;
+            set;
+        }
 
         int difficulty = 10;
         int level = 1;
@@ -180,6 +183,8 @@ namespace Sudokudos
             planeSelectSliderRight.Value = 3;
             PhoneApplicationService.Current.Activated += new EventHandler<ActivatedEventArgs>(iAmZombie);
             PhoneApplicationService.Current.Closing += new EventHandler<ClosingEventArgs>(saveOnClose);
+
+            secondsElapsed = 0;
 
             places = new MirroredCubeView<CellPlacer>(
                 new CellPlacer[,,] {
