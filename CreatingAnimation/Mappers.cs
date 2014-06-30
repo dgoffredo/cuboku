@@ -84,6 +84,20 @@ namespace Sudokudos
                         actor(cube[i, j, k]);
         }
 
+        public delegate void UnaryActorWithCoordinates<T1>(T1 left, int x, int y, int z)
+            where T1 : new();
+
+        public static void forEachWithCoordinates<T1>(CubeView<T1> cube, UnaryActorWithCoordinates<T1> actor)
+            where T1 : new()
+        {
+            const int sideLength = 3;
+
+            for (int x = 0; x < sideLength; ++x)
+                for (int y = 0; y < sideLength; ++y)
+                    for (int z = 0; z < sideLength; ++z)
+                        actor(cube[x, y, z], x, y, z);
+        }
+
         public static void printEach<T>(T[,,] cube)
             where T : new()
         {

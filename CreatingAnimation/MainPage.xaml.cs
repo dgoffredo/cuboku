@@ -145,10 +145,7 @@ namespace Sudokudos
 
         List<Tuple<Action, int>> todoQueue = new List<Tuple<Action, int>>();
 
-        int secondsElapsed {
-            get;
-            set;
-        }
+        volatile int secondsElapsed = 0;
 
         int difficulty = 10;
         int level = 1;
@@ -167,12 +164,11 @@ namespace Sudokudos
         Stack<CellChange> past = new Stack<CellChange>();
         Stack<CellChange> future = new Stack<CellChange>();
 
-        private void iAmZombie(Object whoSentYou, ActivatedEventArgs args)
-        {
-            Debug.WriteLine("Aaaaaaaand we're back.");
-        }
+        Themes themes;
+        Themes.PresetTheme currentTheme = Themes.PresetTheme.Dark;
+        Storyboard bgAnimation;
 
-        private void saveOnClose(Object whoSentYou, ClosingEventArgs args)
+        private void saveOnClose(Object whoSentYou, Object args)
         {
             Debug.WriteLine("Before closing, we're going to first save our state to persistent storage.");
             saveState();
@@ -181,10 +177,16 @@ namespace Sudokudos
         private void requiredInitialization()
         {
             planeSelectSliderRight.Value = 3;
-            PhoneApplicationService.Current.Activated += new EventHandler<ActivatedEventArgs>(iAmZombie);
             PhoneApplicationService.Current.Closing += new EventHandler<ClosingEventArgs>(saveOnClose);
+            PhoneApplicationService.Current.Deactivated += new EventHandler<DeactivatedEventArgs>(saveOnClose);
 
             secondsElapsed = 0;
+
+            themes = new Themes(new ImageBrush[] { (ImageBrush)LayoutRoot.Resources["eye"],
+                                                   (ImageBrush)LayoutRoot.Resources["nebula"],
+                                                   (ImageBrush)LayoutRoot.Resources["red"],
+                                                   (ImageBrush)LayoutRoot.Resources["blue"],
+                                                   (ImageBrush)LayoutRoot.Resources["starry"] });
 
             places = new MirroredCubeView<CellPlacer>(
                 new CellPlacer[,,] {
@@ -267,6 +269,8 @@ namespace Sudokudos
                       {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)},
                       {new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints), new HashSet<XYZ>(comparePoints)} }
                 });
+
+            setTheme(Themes.PresetTheme.Dark);
         }
 
         private void defaultAdditionalInitialization()
@@ -308,11 +312,21 @@ namespace Sudokudos
             InitializeComponent();
 
             requiredInitialization();
+            bool loaded = false;
 
-            bool loaded = loadState();
+            try
+            {
+                loaded = loadState();
+            }
+            catch (Exception ex)
+            {
+                loaded = false;
+                Debug.WriteLine("Caught exception during initialization: {0}", ex);
+            }
+
             if (loaded)
                 Debug.WriteLine("Successfully loaded state from file.");
-            if (!loaded)
+            else
             {
                 Debug.WriteLine("Wasn't able to load state from file. Initializing defaults.");
                 defaultAdditionalInitialization();
@@ -350,6 +364,7 @@ namespace Sudokudos
             state.level = level;
             state.secondsElapsed = secondsElapsed;
             state.selection = selected == null ? null : getCellXYZ(selected);
+            state.theme = currentTheme;
             
             // TODO: Come up with a useful way to store the "puzzle"
             state.puzzle.readFrom(deducePuzzle());
@@ -361,6 +376,9 @@ namespace Sudokudos
         bool enactGameState(GameState state)
         {
             const int d = 3; // dimension
+
+            Debug.WriteLine("The theme I read is: {0}", state.theme);
+            todoQueue.Add(new Tuple<Action, int>(() => { setTheme(state.theme); }, 0));
 
             Ref<int>[,,] rawNumbers = new Ref<int>[d, d, d];
             state.numbers.writeTo(rawNumbers);
@@ -404,7 +422,6 @@ namespace Sudokudos
             Matrix transformation = new Matrix(rawTransformation);
 
             todoQueue.Add(new Tuple<Action, int>(() => {
-                Debug.WriteLine("Hey asshole, is this code running or not?");
                 animationTime = 3.0;
                 Mappers.forEach<TranslationAnimation, Translation<double>>(animations, coordinates, Mappers.setFromOfAnimation);
 
@@ -853,7 +870,7 @@ namespace Sudokudos
             if (stoppingDueToGesture)
                 stoppingDueToGesture = false;
             else
-                background_anim.Resume();
+                bgAnimation.Resume();
         }
 
         private void doRotation(Direction dir)
@@ -1073,7 +1090,7 @@ namespace Sudokudos
                 currentGesture = Gesture.SwipeEdge;
             }
 
-            background_anim.Pause();
+            bgAnimation.Pause();
         }
 
         private void PhoneApplicationPage_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
@@ -1201,7 +1218,7 @@ namespace Sudokudos
                 }
                 else // No animation to wait for, so continue the background one.
                 {
-                    background_anim.Resume();
+                    bgAnimation.Resume();
                 }
             }
             else
@@ -1511,7 +1528,6 @@ namespace Sudokudos
         {
             if (recordInHistory)
             {
-                Debug.WriteLine("DIE, HISTORY, DIE! DIEEE!!!!!!!!!");
                 future.Clear();
                 past.Push(valueFromCell(cell));
             }
@@ -1528,9 +1544,12 @@ namespace Sudokudos
                                     "Congrats", 
                                     MessageBoxButton.OK);
 
+                    // sendData(); // TODO: send update to server, save for later if network not available, etc.
+
                     levelUpAdjustDifficulty();
 
                     resetCube(RandomPuzzle.create(difficulty));
+                    setTheme((Themes.PresetTheme)(new Random().Next() % 5));
                 }, 500);
             }
             else
@@ -1598,11 +1617,7 @@ namespace Sudokudos
             // Clock
             doEvery(() => { 
                 secondsElapsed += 1;
-                // if (secondsElapsed % 10 == 0)
-                //     Debug.WriteLine("It's been {0} seconds.", secondsElapsed); 
             }, 1000);
-
-            // sendData();
 
             foreach (Tuple<Action, int> whatAndWhen in todoQueue) {
                 doAfter(whatAndWhen.Item1, whatAndWhen.Item2);
@@ -1611,14 +1626,41 @@ namespace Sudokudos
 
         private async void sendData()
         {
+            int[, ,] puzz = deducePuzzle();
+
+            const int N = 3;
+            char[] puzzle = new char[N * N * N];
+            char[] solution = new char[N * N * N];
+            for (int y = 0, i = 0; y < N; ++y)
+                for (int z = 0; z < N; ++z)
+                    for (int x = 0; x < N; ++x, ++i)
+                    {
+                        int val = puzz[x, y, z];
+                        if (val == 0)
+                        {
+                            puzzle[i] = '.';
+                            solution[i] = String.Format("{0}", numbers.data[x, y, z].value)[0];
+                        }
+                        else
+                            puzzle[i] = solution[i] = String.Format("{0}", val)[0];
+                    }
+
+            SudokudosServer.Finished request = SudokudosServer.finished("david", new string(puzzle), new string(solution), secondsElapsed);
+
+            Debug.WriteLine("This is what I would write: {0}", request.httpQuery);
+
+            // The actual async stuff
             var client = new HttpClient();
             string data;
-            try {
-                data = await client.GetStringAsync("http://www.sudokudos.com");
-                Debug.WriteLine("Look what I got: {0}", data);
+            try
+            {
+                data = await client.GetStringAsync(request.httpQuery);
+                Debug.WriteLine("Yay I got the data: ", data);
             }
-            catch (System.Exception e) {
+            catch (System.Exception e)
+            {
                 Debug.WriteLine("Caught exception: {0}", e);
+                // TODO: save this for later
             }
         }
 
@@ -1682,6 +1724,66 @@ namespace Sudokudos
         private void ApplicationBarMenuItem_Click_4(object sender, EventArgs e)
         {
             deleteGameStateFile();
+        }
+
+        private void setScaling(Transform tran, Storyboard anim, 
+                                int minutes, double from, double to, string propertyPath)
+        {
+            var scaleAnim = new DoubleAnimation();
+            scaleAnim.Duration = new Duration(new TimeSpan(0, minutes, 0));
+            scaleAnim.From = from;
+            scaleAnim.To = to;
+            scaleAnim.RepeatBehavior = RepeatBehavior.Forever;
+
+            Storyboard.SetTarget(scaleAnim, tran);
+            PropertyPath path = new PropertyPath(propertyPath);
+            Storyboard.SetTargetProperty(scaleAnim, path);
+
+            anim.Children.Add(scaleAnim);
+        }
+
+        private void setTheme(Themes.PresetTheme presetTheme)
+        {
+            try
+            {
+                currentTheme = presetTheme;
+                Themes.Theme theme = themes.getPreset(presetTheme);
+
+                // Animation stuff
+                //
+                if (bgAnimation != null)
+                    bgAnimation.Stop();
+                bgAnimation = new Storyboard();
+
+                var tran = new CompositeTransform(); //PageCanvas.Background.Transform;
+                theme.background.Transform = tran;
+
+                setScaling(tran, bgAnimation, 2, 1, 1.5, "(CompositeTransform.ScaleX)");
+                setScaling(tran, bgAnimation, 2, 1, 2  , "(CompositeTransform.ScaleY)");
+
+                // Swap out background brushes and start animating
+                PageCanvas.Background = theme.background;
+                bgAnimation.Begin();
+
+                Debug.WriteLine(bgAnimation.GetCurrentState());
+
+                Mappers.forEachWithCoordinates(cells, (Border cell, int x, int y, int z) =>
+                {
+                    var color = theme.colors.y[y];
+                    cell.Background = bgColors[x, y, z] = color;
+                });
+            }
+            catch (Exception error)
+            {
+                Debug.WriteLine("Caught an exception: {0}", error);
+                throw;
+            }
+        }
+
+        private void ApplicationBarMenuItem_Click_5(object sender, EventArgs e)
+        {
+                Random rand = new Random();
+                setTheme((Themes.PresetTheme)(rand.Next() % 5));
         }
     }
 }

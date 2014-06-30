@@ -24,30 +24,7 @@
     Loaded="PhoneApplicationPage_Loaded">
     
     <Canvas x:Name="PageCanvas" Tap="PageCanvas_Tap">
-        <Canvas.Background>
-            <ImageBrush ImageSource="/Resources/Images/nebula.png">
-                <ImageBrush.Transform>
-                    <CompositeTransform x:Name="background_tran" ScaleX="1" ScaleY="1" />
-                </ImageBrush.Transform>
-            </ImageBrush>
-        </Canvas.Background>
-        <Canvas.Triggers>
-            <EventTrigger RoutedEvent="Canvas.Loaded">
-                <BeginStoryboard>
-                    <Storyboard x:Name="background_anim" AutoReverse="True" RepeatBehavior="Forever">
-                        <DoubleAnimation Storyboard.TargetName="background_tran"
-                                    Storyboard.TargetProperty="ScaleX"
-                                    Duration="0:1:00"
-                                    From="1" To="1.5" />
-                        <DoubleAnimation Storyboard.TargetName="background_tran"
-                                    Storyboard.TargetProperty="ScaleY"
-                                    Duration="0:1:00"
-                                    From="1" To="2" />
-                    </Storyboard>
-                </BeginStoryboard>
-            </EventTrigger>
-        </Canvas.Triggers>
-
+        
         <StackPanel x:Name="TitlePanel"
             Canvas.Top="0" Canvas.ZIndex="1" Tap="TitlePanel_Tap"
             HorizontalAlignment="Stretch" Width="480">
@@ -66,6 +43,7 @@
                 <System:Double x:Key="cellHeight">45<!--40--></System:Double>
                 <System:Double x:Key="cellWidth">40<!--36--></System:Double>
                 <System:Double x:Key="cellFontSize">36</System:Double>
+                <FontWeight x:Key="cellFontWeight">Bold</FontWeight>
                 <!--<Color x:Key="userEnteredColor"></Color>-->
 
                 <System:Double p:Key="tappadHeight">40</System:Double>
@@ -80,11 +58,16 @@
                 <System:Double x:Key="rightSliderInitialXOffset">75</System:Double>
                 <System:Double x:Key="numPickerInitialYOffset">200</System:Double>
                 <System:Double x:Key="pickerFontSize"><!--55-->62</System:Double>
-                <!--<System:String x:Key="sharedDuration">0:0:3</System:String>-->
+                
+                <SolidColorBrush x:Key="y0Brush" Color="#CC880040" />
+                <SolidColorBrush x:Key="y1Brush" Color="#CC004088" />
+                <SolidColorBrush x:Key="y2Brush" Color="#CC74E800" />
 
-                <SolidColorBrush x:Key="y1Brush" Color="#8811A5F5" />
-                <SolidColorBrush x:Key="y0Brush" Color="#88A500F5" />
-                <SolidColorBrush x:Key="y2Brush" Color="#8811FF99" />
+                <ImageBrush x:Key="nebula" ImageSource="/Resources/Images/nebula.png" />
+                <ImageBrush x:Key="red"    ImageSource="/Resources/Images/red.png" />
+                <ImageBrush x:Key="starry" ImageSource="/Resources/Images/starry.png" />
+                <ImageBrush x:Key="eye"    ImageSource="/Resources/Images/eye.jpg" />
+                <ImageBrush x:Key="blue"   ImageSource="/Resources/Images/blue.png" />
 
                 <Storyboard x:Name="PickerInOut" FillBehavior="HoldEnd" Completed="PickerInOut_Completed">
                     <DoubleAnimation x:Name="anim_numPicker"
@@ -1057,7 +1040,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_0_0_1" Hold="cell_Hold" Background="{StaticResource y0Brush}" HorizontalAlignment="Left" 
@@ -1076,7 +1059,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="6"
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="6"
                             />
                     </Border>
 
@@ -1096,7 +1079,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="9" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="9" />
                     </Border>
 
                     <Border p:Name="cell_0_1_0" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1115,7 +1098,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" 
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="4" 
                             />
                     </Border>
 
@@ -1135,7 +1118,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="5" />
                     </Border>
 
                     <Border p:Name="cell_0_1_2" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1154,7 +1137,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="3" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="3" />
                     </Border>
 
                     <Border p:Name="cell_0_2_0" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1173,7 +1156,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_0_2_1" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1192,7 +1175,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_0_2_2" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1211,7 +1194,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" 
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="7" 
                             />
                     </Border>
 
@@ -1231,7 +1214,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="2" />
                     </Border>
 
                     <Border p:Name="cell_1_0_1" Hold="cell_Hold" Background="{StaticResource y0Brush}" HorizontalAlignment="Left" 
@@ -1250,7 +1233,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="7" />
                     </Border>
 
                     <Border p:Name="cell_1_0_2" Hold="cell_Hold" Background="{StaticResource y0Brush}" HorizontalAlignment="Left" 
@@ -1269,7 +1252,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_1_0" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1288,7 +1271,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_1_1" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1307,7 +1290,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_1_2" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1326,7 +1309,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="1" />
                     </Border>
 
                     <Border p:Name="cell_1_2_0" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1345,7 +1328,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5"
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="5"
                             />
                     </Border>
 
@@ -1365,7 +1348,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_1_2_2" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1384,7 +1367,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_0_0" Hold="cell_Hold" Background="{StaticResource y0Brush}" HorizontalAlignment="Left" 
@@ -1403,7 +1386,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_0_1" Hold="cell_Hold" Background="{StaticResource y0Brush}" HorizontalAlignment="Left" 
@@ -1422,7 +1405,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="4" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="4" />
                     </Border>
 
                     <Border p:Name="cell_2_0_2" Hold="cell_Hold" Background="{StaticResource y0Brush}" HorizontalAlignment="Left" 
@@ -1441,7 +1424,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="5" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="5" />
                     </Border>
 
                     <Border p:Name="cell_2_1_0" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1460,7 +1443,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="7" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="7" />
                     </Border>
 
                     <Border p:Name="cell_2_1_1" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1479,7 +1462,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_1_2" Hold="cell_Hold" Background="{StaticResource y1Brush}" HorizontalAlignment="Left" 
@@ -1498,7 +1481,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="2" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="2" />
                     </Border>
 
                     <Border p:Name="cell_2_2_0" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1517,7 +1500,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
                     <Border p:Name="cell_2_2_1" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1536,7 +1519,7 @@
                             <System:Boolean x:Key="isPreset">True</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="1" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="1" />
                     </Border>
 
                     <Border p:Name="cell_2_2_2" Hold="cell_Hold" Background="{StaticResource y2Brush}" HorizontalAlignment="Left" 
@@ -1555,7 +1538,7 @@
                             <System:Boolean x:Key="isPreset">False</System:Boolean>
                         </Border.Resources>
 
-                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" Text="" Foreground="Lime" />
+                        <TextBlock HorizontalAlignment="Center" FontSize="{StaticResource cellFontSize}" FontWeight="{StaticResource cellFontWeight}" Text="" Foreground="Lime" />
                     </Border>
 
 
@@ -2173,6 +2156,7 @@
                 <shell:ApplicationBarMenuItem Text="save to persistent storage" Click="ApplicationBarMenuItem_Click_3" />
                 <shell:ApplicationBarMenuItem Text="load from persistent storage" Click="ApplicationBarMenuItem_Click_2" />
                 <shell:ApplicationBarMenuItem Text="delete persistent storage" Click="ApplicationBarMenuItem_Click_4" />
+                <shell:ApplicationBarMenuItem Text="random theme" Click="ApplicationBarMenuItem_Click_5" />
                 <shell:ApplicationBarMenuItem Text="generate random puzzle" Click="ApplicationBarMenuItem_Click_1" />              
             </shell:ApplicationBar.MenuItems>
 
