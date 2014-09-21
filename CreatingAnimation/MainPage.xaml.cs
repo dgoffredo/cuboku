@@ -1723,6 +1723,8 @@ namespace Sudokudos
 
         private void ApplicationBarMenuItem_Click_4(object sender, EventArgs e)
         {
+            difficulty = 1;
+            setLevel(difficulty);
             deleteGameStateFile();
         }
 
